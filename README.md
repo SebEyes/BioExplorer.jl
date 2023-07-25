@@ -7,7 +7,7 @@
 
 ## Introduction
 
-BioExplore.jl is a powerful Julia package designed for biodiversity analysis and exploration. This comprehensive toolkit offers a wide range of functions and tools to facilitate the study of biodiversity patterns, species richness, abundance, and ecological metrics. Whether you are a researcher, conservationist, or data enthusiast, BioExplore.jl empowers you to delve into the intricacies of biodiversity data, enabling deeper insights and informed decision-making for the preservation and understanding of our natural world.
+BioExplorer.jl is a powerful Julia package designed for biodiversity analysis and exploration. This comprehensive toolkit offers a wide range of functions and tools to facilitate the study of biodiversity patterns, species richness, abundance, and ecological metrics. Whether you are a researcher, conservationist, or data enthusiast, BioExplorer.jl empowers you to delve into the intricacies of biodiversity data, enabling deeper insights and informed decision-making for the preservation and understanding of our natural world.
 
 ## Features
 

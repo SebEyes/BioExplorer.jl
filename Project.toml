@@ -3,6 +3,9 @@ uuid = "92f832ab-a3ce-4d7c-a08d-a5d13ab1bbba"
 authors = ["Sébastien Lhoumeau"]
 version = "1.0.0-DEV"
 
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+
 [compat]
 julia = "1"
 

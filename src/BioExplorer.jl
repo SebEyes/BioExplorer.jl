@@ -1,5 +1,7 @@
 module BioExplorer
 
-# Write your package code here.
+# Hill series function
+using DataFrames
+include("Hill-series.jl")
 
 end

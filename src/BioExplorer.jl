@@ -1,7 +1,11 @@
 module BioExplorer
 
+using DataFrames, VegaLite
+
 # Hill series function
-using DataFrames
 include("Hill-series.jl")
+
+# SAD function
+include("SAD.jl")
 
 end

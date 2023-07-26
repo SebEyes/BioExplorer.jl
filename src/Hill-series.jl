@@ -1,4 +1,8 @@
-hill = function(Community_matrix::DataFrame)
+hill = function(Community_matrix::DataFrame, Community_vector_name::Symbol)
+
+    Community_name = Community_matrix[:,Community_vector_name]
+
+    Community_matrix = select(Community_matrix, Not(Community_vector_name))
 
     computation = DataFrame(
         H0 = Float64[],
@@ -39,6 +43,7 @@ hill = function(Community_matrix::DataFrame)
 
     end
 
+    computation.community = Community_name
     computation
 
 end

@@ -33,3 +33,38 @@ function whittacker_plot(Community::DataFrameRow)
 end
 
 export whittacker_plot
+
+function octave(Community::DataFrameRow)
+
+    output = permutedims(DataFrame(Community))
+    output.species = names(Community)
+    rename!(output, :x1 => :abundance)
+    
+    output = output[output.abundance .!=0,:]
+    
+    output.octave = ceil.(log.(output.abundance)./log(2))
+    output.octave = Int64.(output.octave)
+
+    output
+    
+end
+
+export octave
+
+function octave_plot(Community::DataFrameRow)
+    octave_classif = BioExplorer.octave(Community)
+
+    plot_data = combine(groupby(octave_classif, :octave, sort=true), nrow)
+    rename!(
+        plot_data,
+        :nrow => :number_species
+    )
+
+    plot_data |> @vlplot(
+        :bar, 
+        x={:octave, axis={title="Octave"}}, 
+        y={:number_species, axis={title="Number of species"}}
+    )
+end
+
+export octave_plot

@@ -2,6 +2,11 @@ function rank(Community::DataFrameRow)
 
     Community = DataFrame(Community)
 
+    Community_name = split_dataframe_by_type(Community)[2][1,1]
+    Community_col = names(split_dataframe_by_type(Community)[2])
+
+    Community = Community[:,Not(Community_col)]
+    
     species_list = names(Community)
 
     Community = permutedims(Community)
@@ -11,30 +16,50 @@ function rank(Community::DataFrameRow)
     Community.rank = 1:nrow(Community)
 
     rename!(Community, [1 => :abundance])
-    Community
+    Community_name, Community
 end
 
 export rank
 
 function whittacker_plot(Community::DataFrameRow)
-    ranked_community = BioExplorer.rank(Community)
+    Community = BioExplorer.rank(Community)
+
+    ranked_community = (Community)[2]
+    graph_title = Community[1]
+
     ranked_community = ranked_community[ranked_community.abundance .!= 0,:]
     ranked_community.log_abundance = log10.(ranked_community.abundance)
 
-    ranked_community |>
-    @vlplot(
-        mark={
-            :line,
-            point=true
-        },
-        y={:log_abundance, axis={title="Log10 abundance"}},
-        x={:rank, axis={title="Rank"}}
+    # Makie plot
+    fig = Figure()
+    ax = Axis(
+        fig[1,1],
+        xlabel = "Rank",
+        ylabel = "Log10 abundance",
+        title = graph_title
     )
+    
+    scatterlines!(
+        ax,
+        ranked_community.rank,
+        ranked_community.log_abundance,
+        markersize=10,
+        color=(:blue,0.8)
+    )
+
+    display(fig)
 end
 
 export whittacker_plot
 
 function octave(Community::DataFrameRow)
+
+    Community = DataFrame(Community)
+
+    Community_name = split_dataframe_by_type(Community)[2][1,1]
+    Community_col = names(split_dataframe_by_type(Community)[2])
+
+    Community = Community[:,Not(Community_col)]
 
     output = permutedims(DataFrame(Community))
     output.species = names(Community)
@@ -45,7 +70,7 @@ function octave(Community::DataFrameRow)
     output.octave = ceil.(log.(output.abundance)./log(2))
     output.octave = Int64.(output.octave)
 
-    output
+    Community_name, output
     
 end
 
@@ -54,17 +79,46 @@ export octave
 function octave_plot(Community::DataFrameRow)
     octave_classif = BioExplorer.octave(Community)
 
-    plot_data = combine(groupby(octave_classif, :octave, sort=true), nrow)
+    graph_title = octave_classif[1]
+    octave_classif = (octave_classif)[2]
+
+    plot_data = combine(
+        groupby(
+            octave_classif,
+            :octave,
+            sort=true
+        ),
+        nrow
+    )
+
     rename!(
         plot_data,
         :nrow => :number_species
     )
 
-    plot_data |> @vlplot(
-        :bar, 
-        x={:octave, axis={title="Octave"}}, 
-        y={:number_species, axis={title="Number of species"}}
+    # Makie plot
+    fig = Figure()
+    ax = Axis(
+        fig[1,1],
+        xlabel = "Octave",
+        ylabel = "Number of species",
+        title = graph_title
     )
+
+    barplot!(
+        plot_data.octave,
+        plot_data.number_species
+    )
+
+    scatterlines!(
+        ax,
+        plot_data.octave,
+        plot_data.number_species,
+        color = ("red", 0.8),
+        markersize = 10
+    )
+
+    display(fig)
 end
 
 export octave_plot

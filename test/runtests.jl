@@ -59,4 +59,5 @@ BioExplorer.octave_plot(com_mat[1,:])
 BioExplorer.octave_plot(SLAM_mat[34,:])
 
 # Test Jaccard dissimilarity
-BioExplorer.jaccard_dissim(com_mat, :site_name)
+BioExplorer.jaccard_dissim_matrix(com_mat, :site_name)
+BioExplorer.jaccard_dissim_matrix(SLAM_mat[4:8,:], :community)

@@ -1,3 +1,10 @@
+export SAC
+
+"""
+    SAC()
+
+Compute species accumulation curve for a given community matrix.
+"""
 function SAC(Community_matrix::DataFrame, Vector_community_name::Symbol, npermut = 0)
     data_accumulation = select(
         Community_matrix,
@@ -85,5 +92,3 @@ function SAC(Community_matrix::DataFrame, Vector_community_name::Symbol, npermut
     end
 
 end
-
-export SAC

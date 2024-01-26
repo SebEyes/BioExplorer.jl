@@ -67,7 +67,7 @@ function octave(Community::DataFrameRow)
     
     output = output[output.abundance .!=0,:]
     
-    output.octave = floor.(log.(output.abundance)./log(2))
+    output.octave = @. floor(log(output.abundance)/log(2)) + 1
     output.octave = Int64.(output.octave)
 
     Community_name, output
@@ -102,7 +102,8 @@ function octave_plot(Community::DataFrameRow)
         fig[1,1],
         xlabel = "Octave",
         ylabel = "Number of species",
-        title = graph_title
+        title = graph_title,
+        xticks = 1:maximum(plot_data.octave)
     )
 
     barplot!(

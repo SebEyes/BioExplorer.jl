@@ -2,8 +2,8 @@ function rank(Community::DataFrameRow)
 
     Community = DataFrame(Community)
 
-    Community_name = split_dataframe_by_type(Community)[2][1,1]
-    Community_col = names(split_dataframe_by_type(Community)[2])
+    Community_name = _split_dataframe_by_type_(Community)[2][1,1]
+    Community_col = names(_split_dataframe_by_type_(Community)[2])
 
     Community = Community[:,Not(Community_col)]
     
@@ -56,8 +56,8 @@ function octave(Community::DataFrameRow)
 
     Community = DataFrame(Community)
 
-    Community_name = split_dataframe_by_type(Community)[2][1,1]
-    Community_col = names(split_dataframe_by_type(Community)[2])
+    Community_name = _split_dataframe_by_type_(Community)[2][1,1]
+    Community_col = names(_split_dataframe_by_type_(Community)[2])
 
     Community = Community[:,Not(Community_col)]
 

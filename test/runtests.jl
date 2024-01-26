@@ -68,3 +68,9 @@ BioExplorer.beta_carvalho(SLAM_mat[[4,8],:], :community)
 
 BioExplorer.beta_carvalho_matrix(com_mat, :site_name)
 BioExplorer.beta_carvalho_matrix(SLAM_mat[4:8,:], :community)[1]
+
+# Species accumulation curve
+BioExplorer.SAC(SLAM_mat, :community)
+BioExplorer.SAC(SLAM_mat, :community, 10)
+BioExplorer.SAC(SLAM_mat, :community, 100)
+BioExplorer.SAC(SLAM_mat, :community, 1000)

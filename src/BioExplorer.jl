@@ -3,9 +3,8 @@ module BioExplorer
 # Depedencies
 using DataFrames, CSV
 using Makie, GLMakie
-
-export 
-        DataFrame
+using Random
+using Statistics
 
 # Tools internal functions
 include("tools.jl")
@@ -18,5 +17,8 @@ include("SAD.jl")
 
 # Beta function
 include("Beta.jl")
+
+# Species accumulation curve
+include("SAC.jl")
 
 end

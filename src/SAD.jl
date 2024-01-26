@@ -67,7 +67,7 @@ function octave(Community::DataFrameRow)
     
     output = output[output.abundance .!=0,:]
     
-    output.octave = ceil.(log.(output.abundance)./log(2))
+    output.octave = floor.(log.(output.abundance)./log(2))
     output.octave = Int64.(output.octave)
 
     Community_name, output

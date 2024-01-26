@@ -8,5 +8,3 @@ function split_dataframe_by_type(df::DataFrame)
 
     return int_df, string_df
 end
-
-export split_dataframe_by_type

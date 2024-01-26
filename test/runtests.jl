@@ -1,5 +1,5 @@
 using BioExplorer
-using DataFrames, CSV
+using CSV, DataFrames
 
 # Test community matrix
 com_mat = (
@@ -13,7 +13,7 @@ com_mat = DataFrame(
     [:sp1, :sp2, :sp3, :sp4, :sp5, :sp6, :sp7, :site_name]
     )
 
-com_mat[!,Not(:site_name)] = convert.(Int64,com_mat[!,Not(:site_name)]);
+com_mat[!,Not(:site_name)] = convert.(Int64,com_mat[!, Not(:site_name)]);
 com_mat[!,:site_name] = convert.(String, com_mat[!,:site_name]);
 
 # Real community data (From SLAM TER 2022)
@@ -61,3 +61,10 @@ BioExplorer.octave_plot(SLAM_mat[34,:])
 # Test Jaccard dissimilarity
 BioExplorer.jaccard_dissim_matrix(com_mat, :site_name)
 BioExplorer.jaccard_dissim_matrix(SLAM_mat[4:8,:], :community)
+
+# Test Carvalho dissimilarity
+BioExplorer.beta_carvalho(com_mat, :site_name)
+BioExplorer.beta_carvalho(SLAM_mat[[4,8],:], :community)
+
+BioExplorer.beta_carvalho_matrix(com_mat, :site_name)
+BioExplorer.beta_carvalho_matrix(SLAM_mat[4:8,:], :community)[1]

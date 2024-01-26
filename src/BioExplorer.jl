@@ -1,9 +1,13 @@
 module BioExplorer
 
+# Depedencies
 using DataFrames, CSV
 using Makie, GLMakie
 
-# Tools function
+export 
+        DataFrame
+
+# Tools internal functions
 include("tools.jl")
 
 # Hill series function

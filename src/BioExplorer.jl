@@ -9,6 +9,9 @@ using Statistics
 # Tools internal functions
 include("tools.jl")
 
+# Community matrix type definition
+include("com_mat.jl")
+
 # Hill series function
 include("Hill-series.jl")
 

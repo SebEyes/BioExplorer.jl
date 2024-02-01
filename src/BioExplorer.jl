@@ -3,7 +3,7 @@ module BioExplorer
 ## Depedencies
 using DataFrames, CSV
 using Makie, GLMakie
-using Random
+using Random, Distributions
 using Statistics
 
 ## Types definition
@@ -19,6 +19,9 @@ export Community_Matrix
 ## Load functions
 # Tools internal functions
 include("tools.jl")
+
+# function to generate community matrix from Poisson distribution
+include("mat_com.jl")
 
 # Hill series function
 include("Hill-series.jl")

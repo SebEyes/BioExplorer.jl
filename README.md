@@ -1,8 +1,6 @@
-# BioExplorer.jl
+# BioExplorer.jl </h1>
 
-<img src="docs\logo_V1.png" alt="BioExplore.jl Logo" width="100"/>
-
-<br>
+<img src="docs\logo_V1.png" alt="BioExplore.jl Logo" align = "right" style="padding-left:10px;" width="150"/>
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Julia Version](https://img.shields.io/badge/Julia-v1.9%20%7C%20v1.9%2B-red.svg)](https://julialang.org/)

@@ -1,9 +1,9 @@
-function jaccard_dissim(Community_matrix::DataFrame, Vector_community_name::Symbol)
-    community_name = Array(select(Community_matrix, Vector_community_name))
+function jaccard_dissim(community_matrix::Community_Matrix)
+    community_name = community_matrix.sites
     com1 = community_name[1]
     com2 = community_name[2]
     
-    community = Array(select(Community_matrix, Not(Vector_community_name)))
+    community = community_matrix.species_data
     
     #community = permutedims(community) #1st col become 1st row
     
@@ -17,39 +17,55 @@ end
 
 export jaccard_dissim
 
-function jaccard_dissim_matrix(Community_matrix::DataFrame, Vector_community_name::Symbol)
-    Beta_matrix = zeros(Float64, size(Community_matrix)[1],size(Community_matrix)[1])
-    Beta_matrix_names = Array(select(Community_matrix, Vector_community_name))
+function jaccard_dissim_matrix(community_matrix::Community_Matrix)
+    # Initialise Output DataFrame
+    beta_matrix = zeros(Float64, size(community_matrix.sites)[1],size(community_matrix.sites)[1])
+    beta_matrix_names = community_matrix.sites
 
-    Beta_matrix = DataFrame(
-        Beta_matrix,
-        Symbol.(Beta_matrix_names[:])
+    beta_matrix = DataFrame(
+        beta_matrix,
+        Symbol.(beta_matrix_names[:])
     )
 
-    Beta_matrix.compared_communities .= Beta_matrix_names
+    beta_matrix.compared_communities .= beta_matrix_names
 
 
 
-    for selected_community in 1:size(Community_matrix)[1]-1
-        possible_comparison = selected_community+1:(size(Community_matrix)[1])
-        #println(selected_community, possible_comparison)
-        for selected_comparison in possible_comparison
-            compared_communities = Community_matrix[[selected_community, selected_comparison],:]
+    for selected_community in 1:size(community_matrix.sites)[1]-1
+    possible_comparison = selected_community+1:(size(community_matrix.sites)[1])
+    #println(selected_community, possible_comparison)
+    for selected_comparison in possible_comparison
+        compared_communities = community_matrix.sites[[selected_community, selected_comparison],:]
+
+        com_index = vcat(
+            findall(
+                community -> community == compared_communities[1],
+                community_matrix.sites
+            ),
+            findall(
+                community -> community == compared_communities[2],
+                community_matrix.sites
+            )
+        )
+        
+        data_com = Community_Matrix(
+            vec(compared_communities),
+            community_matrix.species,
+            community_matrix.species_data[com_index,:]
+        )
 
 
-
-            Beta_matrix[selected_community, selected_comparison] = jaccard_dissim(compared_communities,Vector_community_name)
-            Beta_matrix[selected_comparison, selected_community] = jaccard_dissim(compared_communities,Vector_community_name)
-
-        end
+        beta_matrix[selected_community, selected_comparison] = jaccard_dissim(data_com)
+        beta_matrix[selected_comparison, selected_community] = jaccard_dissim(data_com)
     end
-
+    end
+    
     select!(
-        Beta_matrix,
+        beta_matrix,
         insert!(
             names(
                 select(
-                    Beta_matrix,
+                    beta_matrix,
                     Not(:compared_communities)
                 )
             ),
@@ -61,72 +77,87 @@ end
 
 export jaccard_dissim_matrix
 
-function beta_carvalho(Community_matrix::DataFrame, Vector_community_name::Symbol)
-    community_name = Array(select(Community_matrix, Vector_community_name))
+function beta_carvalho(community_matrix::Community_Matrix)
+    community_name = community_matrix.sites
     com1 = community_name[1]
     com2 = community_name[2]
     
-    community = Array(select(Community_matrix, Not(Vector_community_name)))
+    community = community_matrix.species_data
     
     #community = permutedims(community) #1st col become 1st row
     
     nb_species_com1 = count(i->(i>0), community[1,:])
     nb_species_com2 = count(i->(i>0), community[2,:])
-    nb_common_species = size(community[:,(community[1,:] .> 0) .& (community[2,:] .> 0)])[2]
-    
-    ntot_species = nb_species_com1 + nb_species_com2 - nb_common_species
-
     a = size(community[:,(community[1,:] .> 0) .& (community[2,:] .> 0)])[2]
+    
+    ntot_species = nb_species_com1 + nb_species_com2 - a
+    
     b = nb_species_com1 - a
     c = nb_species_com2 - a
-
+    
     total_dissim = b + c
     dissim_repl = 2 * minimum([b,c])
     dissim_rich = total_dissim - dissim_repl
-
+    
     beta_tot = total_dissim / ntot_species
     beta_repl = dissim_repl / ntot_species
     beta_rich = dissim_rich / ntot_species
-
+    
     [beta_tot, beta_repl, beta_rich]
 end
 
 export beta_carvalho
 
-function beta_carvalho_matrix(Community_matrix::DataFrame, Vector_community_name::Symbol)
-    Beta_matrix = zeros(Float64, size(Community_matrix)[1],size(Community_matrix)[1])
-    Beta_matrix_names = Array(select(Community_matrix, Vector_community_name))
-
-    Beta_matrix = DataFrame(
-        Beta_matrix,
-        Symbol.(Beta_matrix_names[:])
+function beta_carvalho_matrix(community_matrix::Community_Matrix)
+    beta_matrix = zeros(Float64, size(community_matrix.sites)[1],size(community_matrix.sites)[1])
+    beta_matrix_names = community_matrix.sites
+    
+    beta_matrix = DataFrame(
+        beta_matrix,
+        Symbol.(beta_matrix_names[:])
     )
-
-    Beta_matrix.compared_communities .= Beta_matrix_names
-
-    Beta_tot_matrix = copy(Beta_matrix)
-    Beta_repl_matrix = copy(Beta_matrix)
-    Beta_rich_matrix = copy(Beta_matrix)
-
-    for selected_community in 1:size(Community_matrix)[1]-1
-        possible_comparison = selected_community+1:(size(Community_matrix)[1])
+    
+    beta_matrix.compared_communities .= beta_matrix_names
+    
+    beta_tot_matrix = copy(beta_matrix)
+    beta_repl_matrix = copy(beta_matrix)
+    beta_rich_matrix = copy(beta_matrix)
+    
+    for selected_community in 1:size(community_matrix.sites)[1]-1
+        possible_comparison = selected_community+1:(size(community_matrix.sites)[1])
         #println(selected_community, possible_comparison)
         for selected_comparison in possible_comparison
-            compared_communities = Community_matrix[[selected_community, selected_comparison],:]
-
-
-            Beta_tot_matrix[selected_community, selected_comparison] = beta_carvalho(compared_communities,Vector_community_name)[1]
-            Beta_tot_matrix[selected_comparison, selected_community] = beta_carvalho(compared_communities,Vector_community_name)[1]
-
-            Beta_repl_matrix[selected_community, selected_comparison] = beta_carvalho(compared_communities,Vector_community_name)[2]
-            Beta_repl_matrix[selected_comparison, selected_community] = beta_carvalho(compared_communities,Vector_community_name)[2]
-
-            Beta_rich_matrix[selected_community, selected_comparison] = beta_carvalho(compared_communities,Vector_community_name)[3]
-            Beta_rich_matrix[selected_comparison, selected_community] = beta_carvalho(compared_communities,Vector_community_name)[3]
-
+            compared_communities = community_matrix.sites[[selected_community, selected_comparison],:]
+    
+             com_index = vcat(
+                findall(
+                      community -> community == compared_communities[1],
+                      community_matrix.sites
+                ),
+                findall(
+                      community -> community == compared_communities[2],
+                      community_matrix.sites
+                )
+             )
+         
+             data_com = Community_Matrix(
+                   vec(compared_communities),
+                   community_matrix.species,
+                   community_matrix.species_data[com_index,:]
+             )
+    
+            beta_tot_matrix[selected_community, selected_comparison] = beta_carvalho(data_com)[1]
+            beta_tot_matrix[selected_comparison, selected_community] = beta_carvalho(data_com)[1]
+    
+            beta_repl_matrix[selected_community, selected_comparison] = beta_carvalho(data_com)[2]
+            beta_repl_matrix[selected_comparison, selected_community] = beta_carvalho(data_com)[2]
+    
+            beta_rich_matrix[selected_community, selected_comparison] = beta_carvalho(data_com)[3]
+            beta_rich_matrix[selected_comparison, selected_community] = beta_carvalho(data_com)[3]
+    
         end
     end
-    [Beta_tot_matrix, Beta_repl_matrix, Beta_rich_matrix]
+    [beta_tot_matrix, beta_repl_matrix, beta_rich_matrix]
 end
 
 export beta_carvalho_matrix

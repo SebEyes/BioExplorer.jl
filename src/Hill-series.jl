@@ -1,8 +1,8 @@
-hill = function(Community_matrix::DataFrame, Community_vector_name::Symbol)
+hill = function(community_matrix::BioExplorer.Community_Matrix)
 
-    Community_name = Community_matrix[:,Community_vector_name]
+    community_name = community_matrix.sites
 
-    Community_matrix = select(Community_matrix, Not(Community_vector_name))
+    community_data = community_matrix.species_data
 
     computation = DataFrame(
         H0 = Float64[],
@@ -11,28 +11,28 @@ hill = function(Community_matrix::DataFrame, Community_vector_name::Symbol)
         H3 = Float64[]
     )
 
-    for community in 1:nrow(Community_matrix)
-        abundance_vector = Array(Community_matrix[community,:])
+    for community in 1:size(community_data)[1]
+        abundance_vector = community_data[community,:]
         
         abundance_tot = sum(abundance_vector)
 
         abundance_vector = abundance_vector[abundance_vector .!=0]
 
-        Relative_abundance_vector = abundance_vector ./ abundance_tot
+        relative_abundance_vector = abundance_vector ./ abundance_tot
 
-        H0 = Relative_abundance_vector .^ 0
+        H0 = relative_abundance_vector .^ 0
         H0 = sum(H0)
         H0 = H0 .^(1/(1-0))
 
-        H1 = Relative_abundance_vector .* log.(Relative_abundance_vector)
+        H1 = relative_abundance_vector .* log.(relative_abundance_vector)
         H1 = sum(H1)
         H1 = exp(-H1)
 
-        H2 =  Relative_abundance_vector .^ 2
+        H2 = relative_abundance_vector .^ 2
         H2 = sum(H2)
         H2 = H2 .^(1/(1-2))
 
-        H3 =  Relative_abundance_vector .^ 3
+        H3 = relative_abundance_vector .^ 3
         H3 = sum(H3)
         H3 = H3 .^(1/(1-3))
 
@@ -43,7 +43,7 @@ hill = function(Community_matrix::DataFrame, Community_vector_name::Symbol)
 
     end
 
-    computation.community = Community_name
+    computation.community = community_name
     computation
 
 end

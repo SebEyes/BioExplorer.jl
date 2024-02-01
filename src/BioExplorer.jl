@@ -1,16 +1,24 @@
 module BioExplorer
 
-# Depedencies
+## Depedencies
 using DataFrames, CSV
 using Makie, GLMakie
 using Random
 using Statistics
 
+## Types definition
+mutable struct Community_Matrix
+    sites::Vector{String}
+    species::Vector{String}
+    species_data::Array{Float32}
+end
+
+export Community_Matrix
+
+
+## Load functions
 # Tools internal functions
 include("tools.jl")
-
-# Community matrix type definition
-include("com_mat.jl")
 
 # Hill series function
 include("Hill-series.jl")

@@ -1,31 +1,45 @@
-function rank(Community::DataFrameRow)
+function rank(community_matrix::Community_Matrix, community_selected::String)
 
-    Community = DataFrame(Community)
-
-    Community_name = _split_dataframe_by_type_(Community)[2][1,1]
-    Community_col = names(_split_dataframe_by_type_(Community)[2])
-
-    Community = Community[:,Not(Community_col)]
     
-    species_list = names(Community)
-
-    Community = permutedims(Community)
-    Community.species = species_list
+    community_index = findall(
+       community -> community == community_selected,
+       community_matrix.sites
+    )
     
-    Community = sort(Community, rev = true)
-    Community.rank = 1:nrow(Community)
+    community_data = DataFrame(
+        community_matrix.species_data[community_index,:],
+        community_matrix.species
+    )
+    
+    community_data = permutedims(community_data)
+    community_data.species = community_matrix.species
+    
+    community_ranked = sort(community_data, rev = true) #Sort abundance
+    community_ranked.rank = 1:size(community_data)[1] #Add rank information
 
-    rename!(Community, [1 => :abundance])
-    Community_name, Community
+    
+    community_ranked = DataFrame(
+        community_ranked,
+       [:abundance, :species, :rank]
+    )
+    filter!(:abundance => abund -> abund > 0, community_ranked) # Remove 0 abundance
+
+    for rank_index in 1:length(community_ranked.rank)-1 # Process ex-aequo ranking
+        if community_ranked.abundance[rank_index] == community_ranked.abundance[rank_index+1]
+           community_ranked.rank[rank_index+1] = community_ranked.rank[rank_index]
+        end
+     end
+
+    community_selected, community_ranked
 end
 
 export rank
 
-function whittacker_plot(Community::DataFrameRow)
-    Community = BioExplorer.rank(Community)
+function whittacker_plot(community_matrix::Community_Matrix, community_selected::String)
+    community = BioExplorer.rank(community_matrix, community_selected)
 
-    ranked_community = (Community)[2]
-    graph_title = Community[1]
+    ranked_community = (community)[2]
+    graph_title = community[1]
 
     ranked_community = ranked_community[ranked_community.abundance .!= 0,:]
     ranked_community.log_abundance = log10.(ranked_community.abundance)
@@ -52,32 +66,37 @@ end
 
 export whittacker_plot
 
-function octave(Community::DataFrameRow)
+function octave(community_matrix::Community_Matrix, community_selected::String)
 
-    Community = DataFrame(Community)
+    community_name = community_selected
 
-    Community_name = _split_dataframe_by_type_(Community)[2][1,1]
-    Community_col = names(_split_dataframe_by_type_(Community)[2])
-
-    Community = Community[:,Not(Community_col)]
-
-    output = permutedims(DataFrame(Community))
-    output.species = names(Community)
+    community_index = findall(
+       community -> community == community_selected,
+       community_matrix.sites
+    )
+    
+    community_data = DataFrame(
+        community_matrix.species_data[community_index,:],
+        community_matrix.species
+    )
+    
+    output = permutedims(DataFrame(community_data))
+    output.species = names(community_data)
     rename!(output, :x1 => :abundance)
     
     output = output[output.abundance .!=0,:]
     
     output.octave = @. floor(log(output.abundance)/log(2)) + 1
     output.octave = Int64.(output.octave)
-
-    Community_name, output
+    
+    community_name, output
     
 end
 
 export octave
 
-function octave_plot(Community::DataFrameRow)
-    octave_classif = BioExplorer.octave(Community)
+function octave_plot(community_matrix::Community_Matrix, community_selected::String)
+    octave_classif = BioExplorer.octave(community_matrix, community_selected)
 
     graph_title = octave_classif[1]
     octave_classif = (octave_classif)[2]

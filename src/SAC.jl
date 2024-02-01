@@ -1,50 +1,52 @@
-export SAC
-
 """
     SAC()
 
 Compute species accumulation curve for a given community matrix.
 """
-function SAC(Community_matrix::DataFrame, Vector_community_name::Symbol, npermut = 0)
-    data_accumulation = select(
-        Community_matrix,
-        Not(Vector_community_name)
-    )
-    com = collect(1:nrow(data_accumulation))
+function SAC(community_matrix::Community_Matrix, npermut::Int64 = 0)
+    com = collect(1:size(community_matrix.sites)[1])
     
     if npermut == 0
-
-        accum = _accum_loop_(data_accumulation)[2]
-
+    
+       accum = _accum_loop_(community_matrix)[2]
+    
     else
-        # Initialise data gathering
-        accum_runs = Float64[]
+       # Initialise data gathering
+       accum_runs = Float64[]
+    
+       for epochs in 1:npermut
 
-        for epochs in 1:npermut
-            # Shuffle Dataframe rows
-            data_accumulation = shuffle!(data_accumulation)
-            
-            # Compute accumulation
-            accum = _accum_loop_(data_accumulation)[2]
-            
-            # Store data in the purpose to compute intervale around the mean accumulation curve
-            accum_runs = append!(accum_runs, accum)
-
-        end
-
+          # Shuffle communities
+          community_matrix.species_data = community_matrix.species_data[shuffle(1:end),:]
+          
+          # Compute accumulation
+          accum = _accum_loop_(community_matrix)
+          
+          # Store data in the purpose to compute intervale around the mean accumulation curve
+          accum_runs = append!(accum_runs, accum[2])
+    
+       end
+    
         # Unflatten accumulation Vector_community_name
-        accum_run = DataFrame(reshape(accum_runs, (nrow(data_accumulation), npermut)),:auto)
-
+       accum_run = DataFrame(
+          reshape(
+             accum_runs,
+             maximum(com),
+             npermut
+          ),
+          :auto
+       )
+    
         # Compute mean accumulation curve + intervale
-        accum_runs_stats = transform(
-            accum_run,
-            AsTable(:) => ByRow(mean) => :rowmean,
-            AsTable(:) => ByRow(std) => :std
-        )
-        select!(accum_runs_stats, [:rowmean, :std])
-        accum_runs_stats.abv .= accum_runs_stats.rowmean .+ accum_runs_stats.std
-        accum_runs_stats.blw .= accum_runs_stats.rowmean .- accum_runs_stats.std
-
+       accum_runs_stats = transform(
+          accum_run,
+          AsTable(:) => ByRow(mean) => :mean,
+          AsTable(:) => ByRow(std) => :std
+       )
+       select!(accum_runs_stats, [:mean, :std])
+       accum_runs_stats.abv .= accum_runs_stats.mean .+ accum_runs_stats.std
+       accum_runs_stats.blw .= accum_runs_stats.mean .- accum_runs_stats.std
+    
     end
     # Compute plot
     fig = Figure()
@@ -54,7 +56,7 @@ function SAC(Community_matrix::DataFrame, Vector_community_name::Symbol, npermut
         ylabel = "Number of cumulated species",
         title = "Accumulation curve"
     )
-
+    
     if npermut > 0
         band!(
             ax,
@@ -67,7 +69,7 @@ function SAC(Community_matrix::DataFrame, Vector_community_name::Symbol, npermut
         scatterlines!(
             ax,
             com,
-            accum_runs_stats.rowmean,
+            accum_runs_stats.mean,
             markersize=10,
             color=(:blue,0.8)
         )
@@ -80,15 +82,16 @@ function SAC(Community_matrix::DataFrame, Vector_community_name::Symbol, npermut
             color=(:blue,0.8)
         )
     end
-
+    
     # Return plot
     display(fig)
-
+    
     #return accumulation values
     if npermut == 0
         accum
     else
         accum_runs_stats
     end
-
 end
+
+export SAC

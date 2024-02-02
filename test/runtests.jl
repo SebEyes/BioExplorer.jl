@@ -9,7 +9,7 @@ com_mat_data = (
         56 7 3 89 4 7 4 
         9 56 21 78 96 30 0
         8 5 14 78 3 65 4
-        89 2 1 0 78 0 0
+        89 2 1 0 1 0 2
     ]
 )
 
@@ -101,3 +101,7 @@ BioExplorer.SAC(com_mat, 10)
 BioExplorer.SAC(SLAM_mat)
 BioExplorer.SAC(SLAM_mat, 10)
 BioExplorer.SAC(SLAM_mat, 1000)
+
+# Chao estimatores
+BioExplorer.biodiversity_estimate(com_mat)
+BioExplorer.biodiversity_estimate(SLAM_mat)

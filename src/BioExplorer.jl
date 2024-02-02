@@ -35,4 +35,7 @@ include("Beta.jl")
 # Species accumulation curve
 include("SAC.jl")
 
+# Biodiversity chao estimatores
+include("chao.jl")
+
 end

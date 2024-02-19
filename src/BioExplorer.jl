@@ -11,6 +11,7 @@ mutable struct Community_Matrix
     sites::Vector{String}
     species::Vector{String}
     species_data::Array{Float32}
+    type::String
 end
 
 export Community_Matrix

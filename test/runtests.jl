@@ -16,14 +16,22 @@ com_mat_data = (
 com_mat = Community_Matrix(
     ["site1", "site2", "site3", "site4", "site5"],
     ["sp1", "sp2", "sp3", "sp4", "sp5", "sp6", "sp7"],
-    com_mat_data
+    com_mat_data,
+    "abundance"
 )
 
 # Random communities with abundance data from Poisson distribution P(λ)
-mat_com_random = generate_communities(
+mat_com_ab_random = generate_abundance_communities(
     5, # 5 sites
     10, # 10 species
     50 # λ parameter for the Poisson distribution to draw from
+)
+
+# Random communities with incidence data from Binomial distribution B(1, p)
+mat_com_inc_random = generate_incidence_communities(
+    5, # 5 sites
+    10, # 10 species
+    0.5 # p probability of success (= probability that species occurs)
 )
 
 # Real community data (From SLAM TER 2022)
@@ -49,52 +57,54 @@ SLAM_mat = Community_Matrix(
                 Not(:MF)
             )
         )
-    )
+    ),
+    "abundance"
 )
-
+# Convert abundance community matrix to incidence community matrix
+incidence_matrix = BioExplorer.mat_com_convert(com_mat)
 
 # Test hill series computation
-BioExplorer.hill(mat_com_random)
+BioExplorer.hill(mat_com_ab_random)
 BioExplorer.hill(com_mat)
 BioExplorer.hill(SLAM_mat)
 
 # Test rank computation
-BioExplorer.rank(mat_com_random, "site_6")
+BioExplorer.rank(mat_com_ab_random, "site_10")
 BioExplorer.rank(com_mat, "site1")
-test = BioExplorer.rank(SLAM_mat, "TER-0M_9_2022")
+BioExplorer.rank(SLAM_mat, "TER-0M_12_2022")
 
 # Test whittacker_plot
-BioExplorer.whittacker_plot(mat_com_random, "site_10")
+BioExplorer.whittacker_plot(mat_com_ab_random, "site_10")
 BioExplorer.whittacker_plot(com_mat, "site1")
 BioExplorer.whittacker_plot(SLAM_mat, "TER-0M_9_2022")
 
 # Test octave
-BioExplorer.octave(mat_com_random, "site_6")
+BioExplorer.octave(mat_com_ab_random, "site_6")
 BioExplorer.octave(com_mat, "site1")
 BioExplorer.octave(com_mat, "site2")
 BioExplorer.octave(SLAM_mat, "TER-200M_9_2022")
 
 # Test octave plot
-BioExplorer.octave_plot(mat_com_random, "site_6")
+BioExplorer.octave_plot(mat_com_ab_random, "site_6")
 BioExplorer.octave_plot(com_mat, "site2")
 BioExplorer.octave_plot(SLAM_mat, "TER-200M_9_2022")
 
 # Test Jaccard dissimilarity
-BioExplorer.jaccard_dissim_matrix(mat_com_random)
+BioExplorer.jaccard_dissim_matrix(mat_com_inc_random)
 BioExplorer.jaccard_dissim_matrix(com_mat)
 BioExplorer.jaccard_dissim_matrix(SLAM_mat)
 
 # Test Carvalho dissimilarity
-BioExplorer.beta_carvalho(mat_com_random)
+BioExplorer.beta_carvalho(mat_com_ab_random)
 BioExplorer.beta_carvalho(com_mat)
 BioExplorer.beta_carvalho(SLAM_mat)
 
-BioExplorer.beta_carvalho_matrix(mat_com_random)
+BioExplorer.beta_carvalho_matrix(mat_com_ab_random)
 BioExplorer.beta_carvalho_matrix(com_mat)
 BioExplorer.beta_carvalho_matrix(SLAM_mat)
 
 # Species accumulation curve
-BioExplorer.SAC(mat_com_random)
+BioExplorer.SAC(mat_com_inc_random)
 BioExplorer.SAC(com_mat)
 BioExplorer.SAC(com_mat, 10)
 

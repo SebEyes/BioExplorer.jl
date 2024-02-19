@@ -51,7 +51,8 @@ function jaccard_dissim_matrix(community_matrix::Community_Matrix)
         data_com = Community_Matrix(
             vec(compared_communities),
             community_matrix.species,
-            community_matrix.species_data[com_index,:]
+            community_matrix.species_data[com_index,:],
+            community_matrix.type
         )
 
 
@@ -143,7 +144,8 @@ function beta_carvalho_matrix(community_matrix::Community_Matrix)
              data_com = Community_Matrix(
                    vec(compared_communities),
                    community_matrix.species,
-                   community_matrix.species_data[com_index,:]
+                   community_matrix.species_data[com_index,:],
+                   community_matrix.type
              )
     
             beta_tot_matrix[selected_community, selected_comparison] = beta_carvalho(data_com)[1]

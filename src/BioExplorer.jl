@@ -27,6 +27,9 @@ include("mat_com.jl")
 # Hill series function
 include("Hill-series.jl")
 
+# Pielou pielou_eveness
+include("evenness.jl")
+
 # SAD function
 include("SAD.jl")
 

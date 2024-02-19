@@ -5,7 +5,7 @@ using CSV, DataFrames
 # Explicit communities
 com_mat_data = (
     [
-        3 6 7 23 24 0 6 
+        3 3 3 3 3 3 3 
         56 7 3 89 4 7 4 
         9 56 21 78 96 30 0
         8 5 14 78 3 65 4
@@ -67,6 +67,11 @@ incidence_matrix = BioExplorer.mat_com_convert(com_mat)
 BioExplorer.hill(mat_com_ab_random)
 BioExplorer.hill(com_mat)
 BioExplorer.hill(SLAM_mat)
+
+# Test evenness computation
+BioExplorer.pielou_evenness(mat_com_ab_random)
+BioExplorer.pielou_evenness(com_mat)
+BioExplorer.pielou_evenness(SLAM_mat)
 
 # Test rank computation
 BioExplorer.rank(mat_com_ab_random, "site_10")

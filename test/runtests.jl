@@ -71,6 +71,7 @@ BioExplorer.hill(SLAM_mat)
 # Test evenness computation
 BioExplorer.pielou_evenness(mat_com_ab_random)
 BioExplorer.pielou_evenness(com_mat)
+BioExplorer.pielou_evenness(incidence_matrix)
 BioExplorer.pielou_evenness(SLAM_mat)
 
 # Test rank computation

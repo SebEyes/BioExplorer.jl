@@ -27,6 +27,9 @@ include("mat_com.jl")
 # Hill series function
 include("Hill-series.jl")
 
+# Biodiversity surface
+include("biodiversity_surface.jl")
+
 # Pielou pielou_eveness
 include("evenness.jl")
 
@@ -39,7 +42,7 @@ include("Beta.jl")
 # Species accumulation curve
 include("SAC.jl")
 
-# Biodiversity chao estimatores
+# Estimators of species richness (Jackknif and Chao)
 include("chao.jl")
 
 end

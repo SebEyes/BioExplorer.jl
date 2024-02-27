@@ -45,4 +45,7 @@ include("SAC.jl")
 # Estimators of species richness (Jackknif and Chao)
 include("species_estimates.jl")
 
+# Sample coverage metric
+include("coverage.jl")
+
 end

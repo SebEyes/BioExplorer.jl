@@ -128,3 +128,8 @@ BioExplorer.SAC(SLAM_mat, 1000)
 BioExplorer.species_estimates(com_mat)
 BioExplorer.species_estimates(SLAM_mat)
 BioExplorer.species_estimates(incidence_matrix)
+
+# Sampling coverage
+BioExplorer.sampling_coverage(com_mat)
+BioExplorer.sampling_coverage(SLAM_mat)
+BioExplorer.sampling_coverage(incidence_matrix)

@@ -70,6 +70,7 @@ BioExplorer.hill(SLAM_mat)
 
 # Test Biodiversity surface
 BioExplorer.biodiversity_surface(mat_com_ab_random)
+BioExplorer.biodiversity_surface(incidence_matrix)
 BioExplorer.biodiversity_surface(com_mat)
 BioExplorer.biodiversity_surface(SLAM_mat)
 

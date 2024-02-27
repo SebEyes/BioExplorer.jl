@@ -6,9 +6,9 @@ using CSV, DataFrames
 com_mat_data = (
     [
         3 5 8 0 2 1 9 
-        56 7 3 89 4 7 4 
-        9 56 21 78 96 30 0
-        8 5 14 78 3 65 4
+        56 7 3 0 4 7 0 
+        9 56 21 0 96 30 0
+        8 5 14 78 3 65 0
         89 2 1 0 1 0 2
     ]
 )
@@ -125,5 +125,6 @@ BioExplorer.SAC(SLAM_mat, 10)
 BioExplorer.SAC(SLAM_mat, 1000)
 
 # Chao estimatores
-BioExplorer.biodiversity_estimate(com_mat)
-BioExplorer.biodiversity_estimate(SLAM_mat)
+BioExplorer.species_estimates(com_mat)
+BioExplorer.species_estimates(SLAM_mat)
+BioExplorer.species_estimates(incidence_matrix)

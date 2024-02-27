@@ -43,6 +43,6 @@ include("Beta.jl")
 include("SAC.jl")
 
 # Estimators of species richness (Jackknif and Chao)
-include("chao.jl")
+include("species_estimates.jl")
 
 end

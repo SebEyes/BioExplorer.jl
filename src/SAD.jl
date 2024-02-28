@@ -46,6 +46,7 @@ function whittacker_plot(community_matrix::Community_Matrix, community_selected:
 
     ranked_community = ranked_community[ranked_community.abundance .!= 0,:]
     ranked_community.log_abundance = log10.(ranked_community.abundance)
+    ranked_community.rank = 1:nrow(ranked_community)
 
     # Makie plot
     fig = Figure()

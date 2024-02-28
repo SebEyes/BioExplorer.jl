@@ -5,6 +5,7 @@ using DataFrames, CSV
 using Makie, GLMakie
 using Random, Distributions
 using Statistics
+using StatsBase
 
 ## Types definition
 mutable struct Community_Matrix
@@ -47,5 +48,8 @@ include("species_estimates.jl")
 
 # Sample coverage metric
 include("coverage.jl")
+
+# Diversity extrapolation
+include("interpolation_extrapolation.jl")
 
 end

@@ -88,18 +88,18 @@ BioExplorer.rank(SLAM_mat, "TER-0M_12_2022")
 # Test whittacker_plot
 BioExplorer.whittacker_plot(mat_com_ab_random, "site_10")
 BioExplorer.whittacker_plot(com_mat, "site1")
-BioExplorer.whittacker_plot(SLAM_mat, "TER-0M_9_2022")
+BioExplorer.whittacker_plot(SLAM_mat, "TER-0M_12_2022")
 
 # Test octave
 BioExplorer.octave(mat_com_ab_random, "site_6")
 BioExplorer.octave(com_mat, "site1")
 BioExplorer.octave(com_mat, "site2")
-BioExplorer.octave(SLAM_mat, "TER-200M_9_2022")
+BioExplorer.octave(SLAM_mat, "TER-0M_12_2022")
 
 # Test octave plot
 BioExplorer.octave_plot(mat_com_ab_random, "site_6")
 BioExplorer.octave_plot(com_mat, "site2")
-BioExplorer.octave_plot(SLAM_mat, "TER-200M_9_2022")
+BioExplorer.octave_plot(SLAM_mat, "TER-0M_12_2022")
 
 # Test Jaccard dissimilarity
 BioExplorer.jaccard_dissim_matrix(mat_com_inc_random)

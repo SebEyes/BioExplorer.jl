@@ -5,6 +5,8 @@ using DataFrames, CSV
 using Makie, GLMakie
 using Random, Distributions
 using Statistics
+using Optim
+using StatsBase
 
 ## Types definition
 mutable struct Community_Matrix
@@ -47,5 +49,8 @@ include("species_estimates.jl")
 
 # Sample coverage metric
 include("coverage.jl")
+
+# Gambin model estimation
+include("gambin.jl")
 
 end

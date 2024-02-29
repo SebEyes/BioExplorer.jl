@@ -61,7 +61,7 @@ SLAM_mat = Community_Matrix(
     "abundance"
 )
 # Convert abundance community matrix to incidence community matrix
-incidence_matrix = BioExplorer.mat_com_convert(com_mat)
+incidence_matrix = BioExplorer.mat_com_convert(SLAM_mat)
 
 # Test hill series computation
 BioExplorer.hill(mat_com_ab_random)
@@ -94,7 +94,7 @@ BioExplorer.whittacker_plot(SLAM_mat, "TER-0M_12_2022")
 BioExplorer.octave(mat_com_ab_random, "site_6")
 BioExplorer.octave(com_mat, "site1")
 BioExplorer.octave(com_mat, "site2")
-BioExplorer.octave(SLAM_mat, "TER-0M_12_2022")
+BioExplorer.octave(SLAM_mat, "TER-200M_12_2022")
 
 # Test octave plot
 BioExplorer.octave_plot(mat_com_ab_random, "site_6")
@@ -133,3 +133,12 @@ BioExplorer.species_estimates(incidence_matrix)
 BioExplorer.sampling_coverage(com_mat)
 BioExplorer.sampling_coverage(SLAM_mat)
 BioExplorer.sampling_coverage(incidence_matrix)
+
+# Gambin
+BioExplorer.fit_gambin(SLAM_mat, "TER-0M_12_2022")
+BioExplorer.fit_gambin(SLAM_mat, "TER-NFTB-T-15_6_2022")
+
+BioExplorer.fit_gambin_plot(SLAM_mat, "TER-0M_12_2022")
+BioExplorer.fit_gambin_plot(SLAM_mat, "TER-NFTB-T-15_6_2022")
+
+BioExplorer.fit_gambin(incidence_matrix, "TER-0M_12_2022")

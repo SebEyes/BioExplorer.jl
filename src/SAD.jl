@@ -93,7 +93,7 @@ function octave(community_matrix::Community_Matrix, community_selected::String)
         output = output[output.abundance .!=0,:]
         
         output.octave = @. floor(log(output.abundance)/log(2)) + 1
-        output.octave = Int64.(output.octave)
+        output.octave = Int64.(output.octave) .-1
         
         community_name, output
     end
@@ -129,7 +129,7 @@ function octave_plot(community_matrix::Community_Matrix, community_selected::Str
         xlabel = "Octave",
         ylabel = "Number of species",
         title = graph_title,
-        xticks = 1:maximum(plot_data.octave)
+        xticks = 0:maximum(plot_data.octave)
     )
 
     barplot!(

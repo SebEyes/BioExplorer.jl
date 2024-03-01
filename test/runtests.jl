@@ -139,6 +139,6 @@ BioExplorer.fit_gambin(SLAM_mat, "TER-0M_12_2022")
 BioExplorer.fit_gambin(SLAM_mat, "TER-NFTB-T-15_6_2022")
 
 BioExplorer.fit_gambin_plot(SLAM_mat, "TER-0M_12_2022")
-BioExplorer.fit_gambin_plot(SLAM_mat, "TER-NFTB-T-15_6_2022")
+BioExplorer.fit_gambin_plot(SLAM_mat, "TER-NFTB-T-18-ORIGINAL_6_2022")
 
 BioExplorer.fit_gambin(incidence_matrix, "TER-0M_12_2022")

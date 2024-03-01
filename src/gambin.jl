@@ -82,15 +82,15 @@ function fit_gambin_plot(community_matrix::Community_Matrix, community_selected:
             title = community_selected,
             ylabel = "Number of species",
             xlabel = "Octaves",
-            xticks = octs
+            xticks = 0:max_octs
         )
         barplot!(
-            0:max_octs,
+            octs,
             abundance
         )
 
         lines!(
-            0:max_octs,
+            octs,
             _d_GAMBIN_(octs, optim_alpha, max_octs)[1] .* sum(abundance),
             color = :red
         )

@@ -33,3 +33,20 @@ function _checkType_mat_com_(community_matrix::Community_Matrix, mat_com_type::S
          false
    end
 end
+
+function _typedetection_(variable::String, trait_matrix::Trait_Matrix)
+
+   index_variable = findfirst(x -> x == variable, trait_matrix.traits)
+
+   variable_data = trait_matrix.species_data[index_variable, :]
+
+   first_value = eltype(variable_data[findfirst(!ismissing, variable_data)])
+
+   if first_value == Char
+       variable_type = "non_numeric"
+   else
+       variable_type = "numeric"
+   end
+
+   variable_type
+end

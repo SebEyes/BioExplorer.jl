@@ -63,6 +63,25 @@ SLAM_mat = Community_Matrix(
 # Convert abundance community matrix to incidence community matrix
 incidence_matrix = BioExplorer.mat_com_convert(SLAM_mat)
 
+## Test trait matrix
+# Explicit communities
+trait_mat_data = (
+    [
+        1 0 1 0 1 1 1 #Binary trait
+        "red" "blue" "green" "blue" "red" "blue" "green" #Categorical trait
+        1.2 5.3 6.5 4.2 3.6 8.2 1.2 #Continuous trait
+        "small" "big" "big" "big" "small" "small" "small" #Ordinal trait
+        1 5 69 3 24 56 5 #Discrete trait
+    ]
+)
+
+trait_mat = Trait_Matrix(
+    ["trait_1", "trait_2", "trait_3", "trait_4", "trait_5"],
+    ["sp1", "sp2", "sp3", "sp4", "sp5", "sp6", "sp7"],
+    trait_mat_data
+)
+
+
 # Test hill series computation
 BioExplorer.hill(mat_com_ab_random)
 BioExplorer.hill(com_mat)
@@ -142,3 +161,8 @@ BioExplorer.fit_gambin_plot(SLAM_mat, "TER-0M_12_2022")
 BioExplorer.fit_gambin_plot(SLAM_mat, "TER-NFTB-T-18-ORIGINAL_6_2022")
 
 BioExplorer.fit_gambin(incidence_matrix, "TER-0M_12_2022")
+
+
+# Gower dissimilarity
+BioExplorer.pairwise_Gowdis(trait_mat, "sp1", "sp5") # Compute Gower dissmilarity between sp1 and sp5
+BioExplorer.matrix_Gowdis(trait_mat) # Compute Gower dissimilarity matrix

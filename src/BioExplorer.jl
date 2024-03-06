@@ -7,6 +7,7 @@ using Random, Distributions
 using Statistics
 using Optim
 using StatsBase
+using MultivariateStats
 
 ## Types definition
 mutable struct Community_Matrix
@@ -16,7 +17,14 @@ mutable struct Community_Matrix
     type::String
 end
 
+mutable struct Trait_Matrix
+    traits::Vector{String}
+    species::Vector{String}
+    species_data::Array{Any}
+end
+
 export Community_Matrix
+export Trait_Matrix
 
 
 ## Load functions
@@ -52,5 +60,8 @@ include("coverage.jl")
 
 # Gambin model estimation
 include("gambin.jl")
+
+# Gower dissimilarity
+include("Gower_distance.jl")
 
 end

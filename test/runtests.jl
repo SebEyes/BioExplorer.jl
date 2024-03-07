@@ -69,7 +69,7 @@ trait_mat_data = (
     [
         1 0 1 0 1 1 1 #Binary trait
         "red" "blue" "green" "blue" "red" "blue" "green" #Categorical trait
-        1.2 5.3 6.5 4.2 3.6 8.2 1.2 #Continuous trait
+        missing 5.3 6.5 4.2 3.6 8.2 1.2 #Continuous trait
         "small" "big" "big" "big" "small" "small" "small" #Ordinal trait
         1 5 69 3 24 56 5 #Discrete trait
     ]

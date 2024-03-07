@@ -41,11 +41,21 @@ function pairwise_Gowdis(trait_matrix::Trait_Matrix, weight, species1::String, s
         index_variable = findfirst(x -> x == variable_name, trait_matrix.traits)
 
         data_variable = data_selected[index_variable, :]
+        trait_data = collect(skipmissing(trait_matrix.species_data[index_variable,:]))
+
+        if sum(ismissing.(data_variable)) > 0
+            @info(
+                "Trait $variable_name with missing value, not considered in the computation"
+            )
+            variable_weight = 0
+            data_variable .= 1
+        end
+        
 
         if variable_type == "numeric"
             variable_dissimilarities = vcat(
                 variable_dissimilarities,
-                (abs(data_variable[1] - data_variable[2]) / (maximum(trait_matrix.species_data[index_variable,:]) - minimum(trait_matrix.species_data[index_variable,:]))) * variable_weight
+                (abs(data_variable[1] - data_variable[2]) / (maximum(trait_data) - minimum(trait_data))) * variable_weight
             )
         else
             variable_dissimilarities = vcat(

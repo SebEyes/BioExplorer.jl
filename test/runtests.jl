@@ -81,6 +81,7 @@ trait_mat = Trait_Matrix(
     trait_mat_data
 )
 
+trait_weight = [10,5,2,6,3] # trait weights
 
 # Test hill series computation
 BioExplorer.hill(mat_com_ab_random)
@@ -164,5 +165,7 @@ BioExplorer.fit_gambin(incidence_matrix, "TER-0M_12_2022")
 
 
 # Gower dissimilarity
-BioExplorer.pairwise_Gowdis(trait_mat, "sp1", "sp5") # Compute Gower dissmilarity between sp1 and sp5
-BioExplorer.matrix_Gowdis(trait_mat) # Compute Gower dissimilarity matrix
+BioExplorer.pairwise_Gowdis(trait_mat, trait_weight, "sp1", "sp5") # Compute Gower dissmilarity between sp1 and sp5 with weighted traits
+BioExplorer.pairwise_Gowdis(trait_mat, missing, "sp1", "sp5") # Compute Gower dissmilarity between sp1 and sp5 with egal weight
+BioExplorer.matrix_Gowdis(trait_mat, missing) # Compute Gower dissimilarity matrix with egal weight
+BioExplorer.matrix_Gowdis(trait_mat, trait_weight) # Compute Gower dissimilarity matrix with weighted traits

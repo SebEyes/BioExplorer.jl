@@ -67,18 +67,19 @@ incidence_matrix = BioExplorer.mat_com_convert(SLAM_mat)
 # Explicit communities
 trait_mat_data = (
     [
-        1 0 1 0 1 1 1 #Binary trait
-        "red" "blue" "green" "blue" "red" "blue" "green" #Categorical trait
+        1 0 1 0 1 1 1 #Binary trait (= Nominal)
+        "red" "blue" "green" "blue" "red" "blue" "green" #Nominal trait
         missing 5.3 6.5 4.2 3.6 8.2 1.2 #Continuous trait
-        "small" "big" "big" "big" "small" "small" "small" #Ordinal trait
-        1 5 69 3 24 56 5 #Discrete trait
+        1 0 0 0 0.5 1 1 #Ordinal trait (example from 0 = small to 1 = big)
+        1 5 69 3 24 56 5 #Continuous trait
     ]
 )
 
 trait_mat = Trait_Matrix(
     ["trait_1", "trait_2", "trait_3", "trait_4", "trait_5"],
     ["sp1", "sp2", "sp3", "sp4", "sp5", "sp6", "sp7"],
-    trait_mat_data
+    trait_mat_data,
+    ["N", "N", "C", "O", "C"]
 )
 
 trait_weight = [10,5,2,6,3] # trait weights

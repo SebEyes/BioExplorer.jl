@@ -21,6 +21,7 @@ mutable struct Trait_Matrix
     traits::Vector{String}
     species::Vector{String}
     species_data::Array{Any}
+    type::Vector{String}
 end
 
 export Community_Matrix

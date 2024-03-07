@@ -1,5 +1,8 @@
 function pairwise_Gowdis(trait_matrix::Trait_Matrix, weight, species1::String, species2::String)
 
+    #Security for trqit type encoding
+    _typeverification_(trait_matrix)
+
     # If no weight, all traits are considered egals
     if ismissing(weight)
 
@@ -22,17 +25,13 @@ function pairwise_Gowdis(trait_matrix::Trait_Matrix, weight, species1::String, s
 
     data_selected = trait_matrix.species_data[:,[index_sp1, index_sp2]]
 
-    # Detect type for every variable
-
-    variable_list = trait_matrix.traits
-
-    variables_type = [(variable_list[i], _typedetection_(variable_list[i], trait_matrix), weight[i]) for i in 1:length(variable_list)]
+    traits = [(trait_matrix.traits[i], trait_matrix.type[i], weight[i]) for i in 1:length(trait_matrix.traits)]
 
     # Apply computation of dissimilarity per variable acording to the type
 
     variable_dissimilarities = []
 
-    for variable in variables_type
+    for variable in traits
 
         variable_name = variable[1]
         variable_type = variable[2]
@@ -52,15 +51,44 @@ function pairwise_Gowdis(trait_matrix::Trait_Matrix, weight, species1::String, s
         end
         
 
-        if variable_type == "numeric"
+        if variable_type == "C"
             variable_dissimilarities = vcat(
                 variable_dissimilarities,
                 (abs(data_variable[1] - data_variable[2]) / (maximum(trait_data) - minimum(trait_data))) * variable_weight
             )
-        else
+        elseif variable_type == "N"
             variable_dissimilarities = vcat(
                 variable_dissimilarities,
                 (ifelse(data_variable[1] != data_variable[2], 1, 0)) * variable_weight
+            )
+        else
+            # Rank variable
+            variable_ranked = DataFrame(
+                value = sort(trait_matrix.species_data[index_variable,:], rev = false)
+            ) #Sort variable value
+            variable_ranked.rank .= 1 
+    
+            for rank_index in 1:length(variable_ranked.rank)-1 # #Add rank information and process ex-aequo ranking
+                if variable_ranked.value[rank_index] != variable_ranked.value[rank_index+1]
+                    variable_ranked.rank[rank_index+1] = variable_ranked.rank[rank_index] +1
+                else
+                    variable_ranked.rank[rank_index+1] = variable_ranked.rank[rank_index]
+                end
+            end
+
+
+            rank_max = maximum(variable_ranked.rank)
+            rank_min = minimum(variable_ranked.rank)
+
+            sp1_rank = unique(variable_ranked.rank[variable_ranked.value .== data_variable[1]])[1]
+            sp2_rank = unique(variable_ranked.rank[variable_ranked.value .== data_variable[2]])[1]
+
+            # compute weighted dissimilarity
+
+            D = abs(sp1_rank - sp2_rank) / (rank_max - rank_min)
+            variable_dissimilarities = vcat(
+                variable_dissimilarities,
+                D * variable_weight
             )
         end
 
@@ -74,6 +102,7 @@ function pairwise_Gowdis(trait_matrix::Trait_Matrix, weight, species1::String, s
     
     dissim
 end
+
 
 function matrix_Gowdis(trait_matrix::Trait_Matrix, weight)
 

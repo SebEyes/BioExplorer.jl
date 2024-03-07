@@ -34,19 +34,26 @@ function _checkType_mat_com_(community_matrix::Community_Matrix, mat_com_type::S
    end
 end
 
-function _typedetection_(variable::String, trait_matrix::Trait_Matrix)
+function _typeverification_(trait_matrix::Trait_Matrix)
 
-   index_variable = findfirst(x -> x == variable, trait_matrix.traits)
+   types = unique(
+       trait_matrix.type
+   )
 
-   variable_data = trait_matrix.species_data[index_variable, :]
-
-   first_value = eltype(variable_data[findfirst(!ismissing, variable_data)])
-
-   if first_value == Char
-       variable_type = "non_numeric"
-   else
-       variable_type = "numeric"
+   if length(trait_matrix.type) != length(trait_matrix.traits) 
+       @error(
+           "Numbers of traits and types do not match"
+       )
+       return
    end
 
-   variable_type
+   for type in types
+       if type ∉ ["C", "N", "O"]
+           @error(
+               "Trait types must be specified as N(ominal), C(ontinuous) or O(ordinal)"
+           )
+           return
+       end
+   end
+
 end

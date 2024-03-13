@@ -13,8 +13,8 @@ hill = function(community_matrix::BioExplorer.Community_Matrix)
             H3 = Float64[]
         )
 
-        for community in 1:size(community_data)[1]
-            abundance_vector = community_data[community,:]
+        for community in 1:size(community_data)[2]
+            abundance_vector = community_data[:,community]
             
             abundance_tot = sum(abundance_vector)
 

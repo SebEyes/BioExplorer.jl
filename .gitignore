@@ -1,6 +1,11 @@
 /Manifest.toml
 /.vscode
 /src/dev.jl
+/test/use-cases.jl
 /*.R
 /docs/build
 /docs/elements_logo
+
+# Private dataset
+/*.csv
+/*.xlsx

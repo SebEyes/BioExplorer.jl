@@ -38,7 +38,7 @@ function SAC(community_matrix::Community_Matrix, npermut::Int64 = 0)
        )
     
         # Compute mean accumulation curve + intervale
-       accum_runs_stats = transform(
+       accum_runs_stats = DataFrames.transform(
           accum_run,
           AsTable(:) => ByRow(mean) => :mean,
           AsTable(:) => ByRow(std) => :std
@@ -54,7 +54,8 @@ function SAC(community_matrix::Community_Matrix, npermut::Int64 = 0)
         fig[1,1],
         xlabel = "Accumulation unit",
         ylabel = "Number of cumulated species",
-        title = "Accumulation curve"
+        title = "Accumulation curve",
+        limits = (0,nothing)
     )
     
     if npermut > 0

@@ -47,56 +47,54 @@ end
 
 
 function fit_gambin(community_matrix::Community_Matrix, community_selected::String)
-    if _checkType_mat_com_(community_matrix::Community_Matrix, "abundance")
+    _checkType_mat_com_(community_matrix::Community_Matrix, "abundance")
 
-        com_octs = _create_octave_(community_matrix, community_selected)
-        octs = Int64.(com_octs.octave)
-        max_octs = maximum(octs)
-        abundance = com_octs.nb_sp
+    com_octs = _create_octave_(community_matrix, community_selected)
+    octs = Int64.(com_octs.octave)
+    max_octs = maximum(octs)
+    abundance = com_octs.nb_sp
 
-        result = optimize(
-            α -> -_ll_(octs,α,max_octs,abundance),
-            0,
-            100
-        )
+    result = optimize(
+        α -> -_ll_(octs,α,max_octs,abundance),
+        0,
+        100
+    )
 
-        alpha_optim = result.minimizer
+    alpha_optim = result.minimizer
 
-        alpha_optim
-    end
+    alpha_optim
 end
 
 function fit_gambin_plot(community_matrix::Community_Matrix, community_selected::String)
-    if _checkType_mat_com_(community_matrix::Community_Matrix, "abundance")
+    _checkType_mat_com_(community_matrix::Community_Matrix, "abundance")
 
-        optim_alpha = fit_gambin(community_matrix::Community_Matrix, community_selected::String)
+    optim_alpha = fit_gambin(community_matrix::Community_Matrix, community_selected::String)
 
-        com_octs = _create_octave_(community_matrix, community_selected)
-        octs = Int64.(com_octs.octave)
-        max_octs = maximum(octs)
-        abundance = com_octs.nb_sp
+    com_octs = _create_octave_(community_matrix, community_selected)
+    octs = Int64.(com_octs.octave)
+    max_octs = maximum(octs)
+    abundance = com_octs.nb_sp
 
-        fig = Figure()
-        ax = Axis(
-            fig[1,1],
-            title = community_selected,
-            ylabel = "Number of species",
-            xlabel = "Octaves",
-            xticks = 0:max_octs
-        )
-        barplot!(
-            octs,
-            abundance
-        )
+    fig = Figure()
+    ax = Axis(
+        fig[1,1],
+        title = community_selected,
+        ylabel = "Number of species",
+        xlabel = "Octaves",
+        xticks = 0:max_octs
+    )
+    barplot!(
+        octs,
+        abundance
+    )
 
-        lines!(
-            octs,
-            _d_GAMBIN_(octs, optim_alpha, max_octs)[1] .* sum(abundance),
-            color = :red
-        )
+    lines!(
+        octs,
+        _d_GAMBIN_(octs, optim_alpha, max_octs)[1] .* sum(abundance),
+        color = :red
+    )
 
-        fig
-    end
+    fig
 end
 
 export fit_gambin

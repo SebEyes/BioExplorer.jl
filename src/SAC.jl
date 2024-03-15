@@ -55,7 +55,7 @@ function SAC(community_matrix::Community_Matrix, npermut::Int64 = 0)
         xlabel = "Accumulation unit",
         ylabel = "Number of cumulated species",
         title = "Accumulation curve",
-        limits = (0,nothing)
+        limits = (1, nothing, 0, nothing)
     )
     
     if npermut > 0

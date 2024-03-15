@@ -1,39 +1,38 @@
 function rank(community_matrix::Community_Matrix, community_selected::String)
 
-    if _checkType_mat_com_(community_matrix, "abundance")
+    _checkType_mat_com_(community_matrix, "abundance")
     
-        community_index = findall(
-        community -> community == community_selected,
-        community_matrix.sites
-        )
-        
-        community_data = DataFrame(
-            community_matrix.species_data[community_index,:],
-            community_matrix.species
-        )
-        
-        community_data = permutedims(community_data)
-        community_data.species = community_matrix.species
-        
-        community_ranked = sort(community_data, rev = true) #Sort abundance
-        community_ranked.rank = 1:size(community_data)[1] #Add rank information
+    community_index = findall(
+    community -> community == community_selected,
+    community_matrix.sites
+    )
+    
+    community_data = DataFrame(
+        community_matrix.species_data[community_index,:],
+        community_matrix.species
+    )
+    
+    community_data = permutedims(community_data)
+    community_data.species = community_matrix.species
+    
+    community_ranked = sort(community_data, rev = true) #Sort abundance
+    community_ranked.rank = 1:size(community_data)[1] #Add rank information
 
-        
-        community_ranked = DataFrame(
-            community_ranked,
-        [:abundance, :species, :rank]
-        )
-        filter!(:abundance => abund -> abund > 0, community_ranked) # Remove 0 abundance
+    
+    community_ranked = DataFrame(
+        community_ranked,
+    [:abundance, :species, :rank]
+    )
+    filter!(:abundance => abund -> abund > 0, community_ranked) # Remove 0 abundance
 
-        for rank_index in 1:length(community_ranked.rank)-1 # Process ex-aequo ranking
-            if community_ranked.abundance[rank_index] == community_ranked.abundance[rank_index+1]
-            community_ranked.rank[rank_index+1] = community_ranked.rank[rank_index]
-            end
+    for rank_index in 1:length(community_ranked.rank)-1 # Process ex-aequo ranking
+        if community_ranked.abundance[rank_index] == community_ranked.abundance[rank_index+1]
+        community_ranked.rank[rank_index+1] = community_ranked.rank[rank_index]
         end
-
-        community_selected, community_ranked
-
     end
+
+    community_selected, community_ranked
+
 end
 
 export rank
@@ -72,32 +71,30 @@ export whittacker_plot
 
 function octave(community_matrix::Community_Matrix, community_selected::String)
 
-    if _checkType_mat_com_(community_matrix, "abundance")
+    _checkType_mat_com_(community_matrix, "abundance")
 
-        community_name = community_selected
+    community_name = community_selected
 
-        community_index = findall(
-        community -> community == community_selected,
-        community_matrix.sites
-        )
-        
-        community_data = DataFrame(
-            community_matrix.species_data[community_index,:],
-            community_matrix.species
-        )
-        
-        output = permutedims(DataFrame(community_data))
-        output.species = names(community_data)
-        rename!(output, :x1 => :abundance)
-        
-        output = output[output.abundance .!=0,:]
-        
-        output.octave = @. floor(log(output.abundance)/log(2)) + 1
-        output.octave = Int64.(output.octave) .-1
-        
-        community_name, output
-    end
+    community_index = findall(
+    community -> community == community_selected,
+    community_matrix.sites
+    )
     
+    community_data = DataFrame(
+        community_matrix.species_data[community_index,:],
+        community_matrix.species
+    )
+    
+    output = permutedims(DataFrame(community_data))
+    output.species = names(community_data)
+    rename!(output, :x1 => :abundance)
+    
+    output = output[output.abundance .!=0,:]
+    
+    output.octave = @. floor(log(output.abundance)/log(2)) + 1
+    output.octave = Int64.(output.octave) .-1
+    
+    community_name, output
 end
 
 export octave

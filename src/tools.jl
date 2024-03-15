@@ -25,12 +25,8 @@ end
 
 # Function to check if the input community matrix is of a certain type
 function _checkType_mat_com_(community_matrix::Community_Matrix, mat_com_type::String)
-   if(
-         community_matrix.type == mat_com_type)
-         true
-   else
-         @error(" No computation possible, please check community matrix type!")
-         false
+   if(community_matrix.type != mat_com_type)
+    error(" No computation possible, please check community matrix type!")
    end
 end
 

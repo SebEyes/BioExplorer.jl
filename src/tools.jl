@@ -104,3 +104,26 @@ function _distance_(abs1, ord1, abs2, ord2)
         (abs1 - ord1)^2 + (abs2 - ord2)^2
     )
 end
+
+function _centroid_(poly)
+    n = length(poly)
+    sum_x = 0.0
+    sum_y = 0.0
+    sum_areas = 0.0
+    
+    for i in 1:n
+        x_i, y_i = poly[i]
+        x_next, y_next = poly[mod(i, n) + 1]
+        
+        area = x_i * y_next - x_next * y_i
+        sum_x += (x_i + x_next) * area
+        sum_y += (y_i + y_next) * area
+        sum_areas += area
+    end
+    
+    area = sum_areas / 2
+    centroid_x = sum_x / (6 * area)
+    centroid_y = sum_y / (6 * area)
+    
+    return (centroid_x, centroid_y)
+end

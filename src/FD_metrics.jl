@@ -61,6 +61,35 @@ end
 
 export FD_rich
 
+function FD_dispersion(trait_matrix::Trait_Matrix, weight)
+    # Computation Gower distance + PCA
+    GowDis_mat = Float64.(matrix_Gowdis(trait_matrix, weight))
+
+    res_PCA = fit(MultivariateStats.PCA, GowDis_mat; maxoutdim = 2)
+
+    points = projection(res_PCA)
+
+    (varPC1, varPC2) = round.(principalvars(res_PCA).*100, digits = 2)
+
+    df_point = DataFrame(points, ["x","y"])
+    df_point.names = [x for x in trait_matrix.species]
+
+    df_point
+    hull_coord = _convexhull_(df_point)
+
+    (centroid_x, centroid_y) = _centroid_([(hull_coord[i,1],hull_coord[i,2]) for i in 1:size(hull_coord)[1]])
+
+    dist = []
+    for i in 1:size(hull_coord)[1]
+        append!(dist, _distance_(centroid_x, centroid_y, hull_coord[i,1], hull_coord[i,2]))
+    end
+
+    dispersion = mean(dist)
+
+    dispersion
+end
+export FD_dispersion
+
 function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
     FD_rich_tot = FD_rich(trait_matrix, weight, false)
 
@@ -70,8 +99,6 @@ function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
     res_PCA = fit(MultivariateStats.PCA, GowDis_mat; maxoutdim = 2)
     
     points = projection(res_PCA)
-    
-    (varPC1, varPC2) = round.(principalvars(res_PCA).*100, digits = 2)
     
     df_point = DataFrame(points, ["x","y"])
     df_point.names = [x for x in trait_matrix.species]

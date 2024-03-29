@@ -22,7 +22,6 @@ function _accum_loop_(community_matrix::Community_Matrix)
    [com, accum]
 end
 
-
 # Function to check if the input community matrix is of a certain type
 function _checkType_mat_com_(community_matrix::Community_Matrix, mat_com_type::String)
    if(community_matrix.type != mat_com_type)
@@ -52,4 +51,50 @@ function _typeverification_(trait_matrix::Trait_Matrix)
        end
    end
 
+end
+
+function _convexhull_(df_point::DataFrame)
+        ## Jarvis march
+    # Initialise coordinates list
+    point_hull = []
+
+    #step 1 : select point with min abs
+    initial_point = df_point[argmin(df_point.x),:]
+    append!(point_hull, initial_point.x, initial_point.y)
+
+    select_point = initial_point
+    keep_flag = true
+
+    while keep_flag
+        # Compute angle between points
+        df_point.θ = atan.(select_point.y, select_point.x) .- atan.(df_point.y, df_point.x)
+        unique!(df_point)
+
+        # Select next point with the minimum angle
+        df_point = df_point[df_point.θ .!= 0,:]
+
+        next_point = df_point[argmin(df_point.θ),:]
+
+        append!(point_hull, next_point.x, next_point.y)
+
+        select_point = next_point
+
+        if length(point_hull) > 4
+            push!(
+                df_point,
+                initial_point
+            )
+        end
+
+        if select_point.names == initial_point.names
+            keep_flag = false        
+        end
+    end
+
+    hull_coord = hcat(
+        point_hull[1:2:length(point_hull)],
+        point_hull[2:2:length(point_hull)]
+    )
+
+    hull_coord
 end

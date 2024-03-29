@@ -170,3 +170,7 @@ BioExplorer.pairwise_Gowdis(trait_mat, trait_weight, "sp1", "sp5") # Compute Gow
 BioExplorer.pairwise_Gowdis(trait_mat, missing, "sp1", "sp5") # Compute Gower dissmilarity between sp1 and sp5 with egal weight
 BioExplorer.matrix_Gowdis(trait_mat, missing) # Compute Gower dissimilarity matrix with egal weight
 BioExplorer.matrix_Gowdis(trait_mat, trait_weight) # Compute Gower dissimilarity matrix with weighted traits
+
+# Functionnal diversity richness
+BioExplorer.FD_rich(trait_mat, trait_weight)
+BioExplorer.FD_rich(trait_mat, missing)

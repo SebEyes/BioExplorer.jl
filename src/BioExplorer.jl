@@ -65,4 +65,7 @@ include("gambin.jl")
 # Gower dissimilarity
 include("Gower_distance.jl")
 
+# Functionnal diversity
+include("FD_metrics.jl")
+
 end

@@ -98,3 +98,9 @@ function _convexhull_(df_point::DataFrame)
 
     hull_coord
 end
+
+function _distance_(abs1, ord1, abs2, ord2)
+    return sqrt(
+        (abs1 - ord1)^2 + (abs2 - ord2)^2
+    )
+end

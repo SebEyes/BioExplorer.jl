@@ -175,5 +175,5 @@ BioExplorer.matrix_Gowdis(trait_mat, trait_weight) # Compute Gower dissimilarity
 BioExplorer.FD_rich(trait_mat, trait_weight, true)
 BioExplorer.FD_rich(trait_mat, missing, false)
 
-# Species contribution to functionnal diversity
-BioExplorer.FD_contribution(trait_mat, trait_weight)
+# Observation based metrics of functional diversity
+BioExplorer.FD_obs_metrics(trait_mat, trait_weight)

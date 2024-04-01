@@ -14,9 +14,8 @@ BioExplorer.jl is a powerful Julia package designed for biodiversity analysis an
 - Calculate species richness and diversity indices.
 - Analyze species abundance distributions.
 - Explore community composition and beta diversity.
-- Estimate rarefaction and extrapolation curves.
-- Perform taxonomic and phylogenetic diversity assessments.
-- Conduct ecological similarity and dissimilarity analyses.
+- Estimate species taxonomic richness and sampling coverage.
+- Perform taxonomic and functionnal diversity assessments.
 
 ## Installation
 

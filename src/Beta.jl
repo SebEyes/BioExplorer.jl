@@ -1,3 +1,18 @@
+"""
+    jaccard_dissim(community_matrix::Community_Matrix)
+
+Compute the Jaccard dissimilarity between two communities.
+
+# Arguments
+- `community_matrix::Community_Matrix`: A community matrix containing species data for two communities. If more than communities are present, only the two first ones are considered.
+
+# Returns
+- `jaccard_dissim_value::Float64`: The Jaccard dissimilarity value between the two communities.
+
+# Details
+The Jaccard dissimilarity measures dissimilarity between two sets by comparing their intersection to their union. 
+For two communities represented by binary species presence-absence data, it is calculated as the number of species found in only one of the communities divided by the total number of species found in either community.
+"""
 function jaccard_dissim(community_matrix::Community_Matrix)
     community_name = community_matrix.sites
     com1 = community_name[1]
@@ -17,6 +32,24 @@ end
 
 export jaccard_dissim
 
+"""
+    jaccard_dissim_matrix(community_matrix::Community_Matrix)
+
+Compute the Jaccard dissimilarity matrix between all communities in a community matrix.
+
+# Arguments
+- `community_matrix::Community_Matrix`: A community matrix containing species data for multiple communities.
+
+# Returns
+- `beta_matrix::DataFrame`: A DataFrame representing the Jaccard dissimilarity matrix between all pairs of communities.
+
+# Details
+The function calculates the Jaccard dissimilarity between all pairs of communities in the given community matrix. 
+It iterates over all possible combinations of communities and computes the Jaccard dissimilarity using the `jaccard_dissim` function. 
+The result is stored in a DataFrame where each row and column represent a community, and the values represent the Jaccard dissimilarity between corresponding pairs of communities.
+
+See also [`jaccard_dissim`](@ref)
+"""
 function jaccard_dissim_matrix(community_matrix::Community_Matrix)
     # Initialise Output DataFrame
     beta_matrix = zeros(Float64, size(community_matrix.sites)[1],size(community_matrix.sites)[1])
@@ -78,6 +111,24 @@ end
 
 export jaccard_dissim_matrix
 
+"""
+    beta_carvalho(community_matrix::Community_Matrix)
+
+Compute beta diversity between two communities of a community matrix according to the Carvalho framework:
+Carvalho, J. C., Cardoso, P., Borges, P. A. V., Schmera, D., & Podani, J. (2013). Measuring fractions of beta diversity and their relationships to nestedness: A theoretical and empirical comparison of novel approaches. Oikos, 122(6), 825-834. https://doi.org/10.1111/j.1600-0706.2012.20980.x
+
+# Arguments
+- `community_matrix::Community_Matrix`: A community matrix containing species data for two communities. If more than communities are present, only the two first ones are considered.
+
+# Returns
+- An array containing three components of beta diversity: total dissimilarity, replacement dissimilarity, and richness dissimilarity.
+
+# Details
+The function calculates beta diversity between two communities using the Carvalho framework, which decomposes beta diversity into three components: total dissimilarity, replacement dissimilarity, and richness dissimilarity. 
+Total dissimilarity measures the overall difference in species composition between two communities. 
+Replacement dissimilarity measures the extent to which species in one community are replaced by different species in the other community. 
+Richness dissimilarity measures the difference in species richness between the two communities.
+"""
 function beta_carvalho(community_matrix::Community_Matrix)
     community_name = community_matrix.sites
     com1 = community_name[1]
@@ -108,7 +159,24 @@ function beta_carvalho(community_matrix::Community_Matrix)
 end
 
 export beta_carvalho
+"""
+    beta_carvalho_matrix(community_matrix::Community_Matrix)
 
+Compute the beta diversity matrix between all pairs of communities in a community matrix according to the Carvalho framework:
+Carvalho, J. C., Cardoso, P., Borges, P. A. V., Schmera, D., & Podani, J. (2013). Measuring fractions of beta diversity and their relationships to nestedness: A theoretical and empirical comparison of novel approaches. Oikos, 122(6), 825-834. https://doi.org/10.1111/j.1600-0706.2012.20980.x
+
+# Arguments
+- `community_matrix::Community_Matrix`: A community matrix containing species data for multiple communities.
+
+# Returns
+- An array containing three DataFrames representing the beta diversity matrices for total dissimilarity, replacement dissimilarity, and richness dissimilarity.
+
+# Details
+The function calculates beta diversity between all pairs of communities using the Carvalho framework, which decomposes beta diversity into three components: total dissimilarity, replacement dissimilarity, and richness dissimilarity. 
+For each component, a separate DataFrame is returned where each row and column represent a community, and the values represent the beta diversity between corresponding pairs of communities.
+
+See also [`beta_carvalho`](@ref)
+"""
 function beta_carvalho_matrix(community_matrix::Community_Matrix)
     beta_matrix = zeros(Float64, size(community_matrix.sites)[1],size(community_matrix.sites)[1])
     beta_matrix_names = community_matrix.sites

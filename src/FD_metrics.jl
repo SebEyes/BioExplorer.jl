@@ -201,4 +201,4 @@ function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
 
 end
 
-export FD_contribution
+export FD_obs_metrics

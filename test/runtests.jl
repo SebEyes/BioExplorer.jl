@@ -146,9 +146,9 @@ BioExplorer.SAC(SLAM_mat, 10)
 BioExplorer.SAC(SLAM_mat, 1000)
 
 # Chao estimatores
-BioExplorer.species_estimates(com_mat)
-BioExplorer.species_estimates(SLAM_mat)
-BioExplorer.species_estimates(incidence_matrix)
+BioExplorer.biodiversity_estimate(com_mat)
+BioExplorer.biodiversity_estimate(SLAM_mat)
+BioExplorer.biodiversity_estimate(incidence_matrix)
 
 # Sampling coverage
 BioExplorer.sampling_coverage(com_mat)

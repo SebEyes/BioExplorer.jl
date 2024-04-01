@@ -1,3 +1,25 @@
+"""
+    rank(community_matrix::Community_Matrix, community_selected::String)
+
+Rank the species according to their abundance in a selected community.
+
+# Arguments
+- `community_matrix::Community_Matrix`: The input community matrix.
+- `community_selected::String`: The name of the community for which species ranking is required.
+
+# Returns
+A tuple `(community_name, community_ranked)` where:
+- `community_name` is the name of the selected community.
+- `community_ranked` is a DataFrame containing species ranked by abundance in the selected community.
+
+# Details
+This function ranks the species according to their abundance in the specified community of the input community matrix. 
+It sorts the species by abundance in descending order and assigns ranks. 
+If species have the same abundance, they are assigned the same rank (ex-aequo ranking). 
+The function removes species with zero abundance.
+
+See also [`whittacker_plot`](@ref)
+"""
 function rank(community_matrix::Community_Matrix, community_selected::String)
 
     _checkType_mat_com_(community_matrix, "abundance")
@@ -37,6 +59,26 @@ end
 
 export rank
 
+"""
+    whittacker_plot(community_matrix::Community_Matrix, community_selected::String)
+
+Display the Whittaker plot of a selected community.
+
+# Arguments
+- `community_matrix::Community_Matrix`: The input community matrix.
+- `community_selected::String`: The name of the community for which the Whittaker plot is to be displayed.
+
+# Returns
+- Makie Figure representing the Whittaker plot. 
+
+# Details
+This function generates a Whittaker plot for the selected community from the input community matrix. 
+The plot shows the log10 abundance of species against their rank. 
+The species are ranked by abundance, and the abundance is plotted on the y-axis in log10 scale. 
+The rank of each species is plotted on the x-axis.
+
+See also [`rank`](@re, [`octave_plot`](@ref)
+"""
 function whittacker_plot(community_matrix::Community_Matrix, community_selected::String)
     community = BioExplorer.rank(community_matrix, community_selected)
 
@@ -69,6 +111,26 @@ end
 
 export whittacker_plot
 
+"""
+    octave(community_matrix::Community_Matrix, community_selected::String)
+
+Compute the octave distribution of species in a selected community.
+
+# Arguments
+- `community_matrix::Community_Matrix`: The input community matrix.
+- `community_selected::String`: The name of the community for which the octave distribution is to be computed.
+
+# Returns
+A tuple `(community_name, community_ranked)` where:
+- `community_name` is the name of the selected community.
+- `community_octave` is a DataFrame containing the species abundance and their corresponding octave class.
+
+# Details
+This function computes the octave distribution of species abundance within a selected community from the input community matrix. 
+The octave distribution categorizes species abundance into octave classes, with each class representing a doubling in abundance. 
+
+See also [`octave_plot`](@ref),
+"""
 function octave(community_matrix::Community_Matrix, community_selected::String)
 
     _checkType_mat_com_(community_matrix, "abundance")
@@ -99,6 +161,24 @@ end
 
 export octave
 
+"""
+    octave_plot(community_matrix::Community_Matrix, community_selected::String)
+
+Display the Octave plot of a selected community.
+
+# Arguments
+- `community_matrix::Community_Matrix`: The input community matrix.
+- `community_selected::String`: The name of the community for which the Octave plot is to be displayed.
+
+# Returns
+- Makie Figure representing the Octave plot.
+
+# Details
+This function computes the octave distribution of species abundance within a selected community using the `octave` function and displays it as a bar plot. 
+Each bar in the plot represents an octave class, with the x-axis indicating the octave class and the y-axis indicating the number of species falling within each octave class.
+
+See also [`octave`](@ref),
+"""
 function octave_plot(community_matrix::Community_Matrix, community_selected::String)
     octave_classif = BioExplorer.octave(community_matrix, community_selected)
 

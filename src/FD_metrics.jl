@@ -1,3 +1,23 @@
+"""
+    FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
+
+Calculate the functional richness of a trait matrix using Gower distance and PCA.
+
+# Arguments
+- `trait_matrix::Trait_Matrix`: A trait matrix containing trait values for different species.
+- `weight`: Vector of weight parameters for each traits in the trait matrix. Can be missing, in this case, each traits are consider equals.
+- `display_graph::Bool`: A boolean flag indicating whether to display the graph.
+
+# Returns
+- `rich`: Functional richness value.
+
+# Details
+The function computes the Gower distance matrix from the trait matrix and performs Principal Component Analysis (PCA) on it. 
+It then projects the data onto the first two principal components and computes the convex hull of the projected points. 
+If `display_graph` is set to true, it generates a scatter plot of the projected points with the convex hull highlighted.
+Finally, it calculates the functional richness using Gauss' shoelace formula for the area of the convex hull.
+
+"""
 function FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
 
     # Computation Gower distance + PCA
@@ -61,6 +81,25 @@ end
 
 export FD_rich
 
+"""
+    FD_dispersion(trait_matrix::Trait_Matrix, weight)
+
+Compute the functional dispersion of a trait matrix using Gower distance and PCA.
+
+# Arguments
+- `trait_matrix::Trait_Matrix`: A trait matrix containing trait values for different species.
+- `weight`: Vector of weight parameters for each traits in the trait matrix. Can be missing, in this case, each traits are consider equals.
+
+# Returns
+- `dispersion`: Functional dispersion value.
+
+# Details
+The function computes the Gower distance matrix from the trait matrix and performs Principal Component Analysis (PCA) on it. 
+It then projects the data onto the first two principal components and computes the convex hull of the projected points. 
+Next, it calculates the centroid of the convex hull and computes the distance of each point on the hull from the centroid. 
+The functional dispersion is then calculated as the mean distance of all points on the hull from the centroid.
+
+"""
 function FD_dispersion(trait_matrix::Trait_Matrix, weight)
     # Computation Gower distance + PCA
     GowDis_mat = Float64.(matrix_Gowdis(trait_matrix, weight))
@@ -90,6 +129,28 @@ function FD_dispersion(trait_matrix::Trait_Matrix, weight)
 end
 export FD_dispersion
 
+"""
+    FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
+
+Compute observation-based metrics of functional diversity: Originality, Uniqueness, and Contribution.
+
+# Arguments
+- `trait_matrix::Trait_Matrix`: A trait matrix containing trait values for different species.
+- `weight`: Vector of weight parameters for each traits in the trait matrix. Can be missing, in this case, each traits are consider equals.
+
+# Returns
+- `Obs_metrics`: DataFrame containing observation-based metrics for each species.
+
+# Details
+The function calculates three observation-based metrics of functional diversity:
+1. Species Contribution: Contribution of each species to the overall functional richness.
+2. Species Originality: Average distance of each species to all other species in trait space.
+3. Species Uniqueness: Minimum distance of each species to any other species in trait space.
+
+The contribution of each species is calculated by iteratively removing one species at a time, recalculating the functional richness, and computing the difference from the total richness. 
+Originality is calculated as the average distance of each species to all other species, while uniqueness is calculated as the minimum distance of each species to any other species.
+
+"""
 function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
     FD_rich_tot = FD_rich(trait_matrix, weight, false)
 

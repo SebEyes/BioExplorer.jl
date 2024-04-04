@@ -29,10 +29,21 @@ function FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
 
     (varPC1, varPC2) = round.(principalvars(res_PCA).*100, digits = 2)
 
-    df_point = DataFrame(points, ["x","y"])
-    df_point.names = [x for x in trait_matrix.species]
+    x = points[:, 1]
+    y = points[:, 2]
+    
+    tuple_points = []
+    for i in  1:size(points)[1]
+        append!(tuple_points, [tuple(x[i], y[i])])
+    end
+    df_point = DataFrame(
+        coord = tuple_points,
+        names = [x for x in trait_matrix.species]
+    )
 
-    hull_coord = _convexhull_(df_point)
+    hull_coord = _hull_(df_point.coord)
+    points_coord = [df_point.coord[i] for i in 1:length(df_point.coord)]
+
 
     if display_graph
         fig = Figure()
@@ -59,11 +70,11 @@ function FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
         )
         scatter!(
             prinAx,
-            points,
+            points_coord,
             markersize = 20
         )
         text!(
-            points,
+            points_coord,
             text = [x for x in trait_matrix.species],
             offset = (-15, 5)
         )
@@ -73,7 +84,19 @@ function FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
 
 
     #Gauss' shoelace formula for the area of a polygon
-    hull_coord = hull_coord[end:-1:1,end:-1:1] #reverse points
+    hull_coord = hull_coord[end:-1:1,end:-1:1]
+
+    hull_coord_x, hull_coord_y = [], []
+
+    for i in 1:length(hull_coord)
+        append!(hull_coord_x, hull_coord[i][1])
+        append!(hull_coord_y, hull_coord[i][2])
+    end
+    hull_coord = hcat(
+        hull_coord_x,
+        hull_coord_y
+    )
+
     rich = 0.5*sum([hull_coord[i,2]*hull_coord[i+1,1] - hull_coord[i,1]*hull_coord[i+1,2]  for i in 1:size(hull_coord)[1]-1])
 
     return rich
@@ -105,26 +128,46 @@ function FD_dispersion(trait_matrix::Trait_Matrix, weight)
     GowDis_mat = Float64.(matrix_Gowdis(trait_matrix, weight))
 
     res_PCA = fit(MultivariateStats.PCA, GowDis_mat; maxoutdim = 2)
-
+    
     points = projection(res_PCA)
-
-    (varPC1, varPC2) = round.(principalvars(res_PCA).*100, digits = 2)
-
     df_point = DataFrame(points, ["x","y"])
     df_point.names = [x for x in trait_matrix.species]
-
-    df_point
-    hull_coord = _convexhull_(df_point)
-
+    
+    x = points[:, 1]
+    y = points[:, 2]
+    
+    tuple_points = []
+    
+    for i in  1:size(points)[1]
+        append!(tuple_points, [tuple(x[i], y[i])])
+    end
+    df_point = DataFrame(
+        coord = tuple_points,
+        names = [x for x in trait_matrix.species]
+    )
+    
+    hull_coord = _hull_(df_point.coord)
+    
+    hull_coord_x, hull_coord_y = [], []
+    
+    for i in 1:length(hull_coord)
+        append!(hull_coord_x, hull_coord[i][1])
+        append!(hull_coord_y, hull_coord[i][2])
+    end
+    hull_coord = hcat(
+        hull_coord_x,
+        hull_coord_y
+    )
+    
     (centroid_x, centroid_y) = _centroid_([(hull_coord[i,1],hull_coord[i,2]) for i in 1:size(hull_coord)[1]])
-
+    
     dist = []
     for i in 1:size(hull_coord)[1]
         append!(dist, _distance_(centroid_x, centroid_y, hull_coord[i,1], hull_coord[i,2]))
     end
-
+    
     dispersion = mean(dist)
-
+    
     dispersion
 end
 export FD_dispersion
@@ -161,8 +204,19 @@ function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
     
     points = projection(res_PCA)
     
-    df_point = DataFrame(points, ["x","y"])
-    df_point.names = [x for x in trait_matrix.species]
+    x = points[:, 1]
+    y = points[:, 2]
+    
+    tuple_points = []
+    for i in  1:size(points)[1]
+        append!(tuple_points, [tuple(x[i], y[i])])
+    end
+    df_point = DataFrame(
+        coord = tuple_points,
+        names = [x for x in trait_matrix.species],
+        x = points[:, 1],
+        y = points[:, 2]
+    )
     
     # species contribution
     contrib_sp = []
@@ -174,10 +228,22 @@ function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
         index_sp = findfirst(x -> x == species, df_point.names)
         df_point = df_point[Not(index_sp),:]
     
-        hull_coord = _convexhull_(df_point)
+        hull_coord = _hull_(df_point.coord)
     
         #Gauss' shoelace formula for the area of a polygon
-        hull_coord = hull_coord[end:-1:1,end:-1:1] #reverse points
+        hull_coord = hull_coord[end:-1:1,end:-1:1]
+
+        hull_coord_x, hull_coord_y = [], []
+    
+        for i in 1:length(hull_coord)
+            append!(hull_coord_x, hull_coord[i][1])
+            append!(hull_coord_y, hull_coord[i][2])
+        end
+        hull_coord = hcat(
+            hull_coord_x,
+            hull_coord_y
+        )
+
         rich = 0.5*sum([hull_coord[i,2]*hull_coord[i+1,1] - hull_coord[i,1]*hull_coord[i+1,2]  for i in 1:size(hull_coord)[1]-1])
         
         append!(contrib_sp, FD_rich_tot - rich)
@@ -194,7 +260,7 @@ function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
     for i in 1:nrow(df_point)
         for j in i+1:nrow(df_point)
     
-            dist = _distance_(df_point[i,1], df_point[i,2], df_point[j,1], df_point[j,2])
+            dist = _distance_(df_point.x[i], df_point.y[i], df_point.x[j], df_point.y[j])
     
             append!(dist_sp, dist)
             append!(Species_1,[trait_matrix.species[i]])

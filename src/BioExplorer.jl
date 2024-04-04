@@ -8,6 +8,7 @@ using Statistics
 using Optim
 using StatsBase
 using MultivariateStats
+using LinearAlgebra
 
 ## Types definition
 mutable struct Community_Matrix

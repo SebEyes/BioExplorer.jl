@@ -53,50 +53,55 @@ function _typeverification_(trait_matrix::Trait_Matrix)
 
 end
 
-function _convexhull_(df_point::DataFrame)
-        ## Jarvis march
-    # Initialise coordinates list
-    point_hull = []
+function _orientation_(p, q, r)
+    val = (q[2] - p[2]) * (r[1] - q[1]) - (q[1] - p[1]) * (r[2] - q[2])
+    if val == 0
+        return 0  # Les points sont colinéaires
+    elseif val > 0
+        return 1  # Sens horaire
+    else
+        return 2  # Sens anti-horaire
+    end
+end
 
-    #step 1 : select point with min abs
-    initial_point = df_point[argmin(df_point.x),:]
-    append!(point_hull, initial_point.x, initial_point.y)
-
-    select_point = initial_point
-    keep_flag = true
-
-    while keep_flag
-        # Compute angle between points
-        df_point.θ = atan.(select_point.y, select_point.x) .- atan.(df_point.y, df_point.x)
-        unique!(df_point)
-
-        # Select next point with the minimum angle
-        df_point = df_point[df_point.θ .!= 0,:]
-
-        next_point = df_point[argmin(df_point.θ),:]
-
-        append!(point_hull, next_point.x, next_point.y)
-
-        select_point = next_point
-
-        if length(point_hull) > 4
-            push!(
-                df_point,
-                initial_point
-            )
-        end
-
-        if select_point.names == initial_point.names
-            keep_flag = false        
+function _jarvis_march_(points)
+    n = length(points)
+    # Trouver le point le plus à gauche
+    l = 1
+    for i in 2:n
+        if points[i][1] < points[l][1]
+            l = i
         end
     end
 
-    hull_coord = hcat(
-        point_hull[1:2:length(point_hull)],
-        point_hull[2:2:length(point_hull)]
-    )
+    p = l  # Point de départ de l'enveloppe convexe
+    hull = []
+    for loop in 1:n
+        push!(hull, points[p])
 
-    hull_coord
+        q = rem(p % n + 1, n) == 0 ? n : rem(p % n + 1, n)
+        
+        for i in 1:n
+            if _orientation_(points[p], points[i], points[q]) == 2
+                q = i
+            end
+        end
+
+        p = q
+        if p == l
+            return hull
+        end
+    end
+
+    # return hull
+end
+
+function _hull_(coord::Vector)
+    hull = _jarvis_march_(coord)
+    hull = vcat(hull, hull[1])
+
+    hull = [hull[i] for i in 1:length(hull)]
+    return hull
 end
 
 function _distance_(abs1, ord1, abs2, ord2)

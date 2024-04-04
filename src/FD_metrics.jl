@@ -183,18 +183,14 @@ function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
         append!(contrib_sp, FD_rich_tot - rich)
     end
     
-    contrib_sp = DataFrame(
-        Species = [x for x in trait_matrix.species],
-        Contribution = contrib_sp
-    )
-    
-    # Species originality
+    # Species originality and uniqueness
     df_point = species_pos
     
     dist_sp = []
     Species_1 = []
     Species_2 = []
     
+    # Compute distance between each species
     for i in 1:nrow(df_point)
         for j in i+1:nrow(df_point)
     
@@ -208,54 +204,24 @@ function FD_obs_metrics(trait_matrix::Trait_Matrix, weight)
     end
     
     dist_sp = DataFrame(
-        Species_1 = Species_1,
-        Species_2 = Species_2,
+        Species = Species_1 .*"-" .*Species_2,
         Distance = dist_sp 
     )
     
     originality = []
-    
-    for species in dist_sp.Species_1
-        dist = dist_sp[dist_sp.Species_1 .== species,:]
-        append!(originality, mean(dist.Distance))
-        unique!(originality)
-    end
-    
-    last_species = [trait_matrix.species[size(trait_matrix.species_data)[2]]]
-    dist = dist_sp[dist_sp.Species_2 .== last_species,:]
-    append!(originality, mean(dist.Distance))
-    unique!(originality)
-    
-    originality = DataFrame(
-        Species = [x for x in trait_matrix.species],
-        Originality = originality
-    )
-    
-    # Species uniqueness
     uniqueness = []
-    for species in dist_sp.Species_1
-        dist = dist_sp[dist_sp.Species_1 .== species,:]
+
+    for species in trait_matrix.species
+        dist = dist_sp[occursin.(species,dist_sp.Species),:]
+        append!(originality, mean(dist.Distance))
         append!(uniqueness, minimum(dist.Distance))
-        unique!(uniqueness)
     end
-    last_species = [trait_matrix.species[size(trait_matrix.species_data)[2]]]
-    dist = dist_sp[dist_sp.Species_2 .== last_species,:]
-    append!(uniqueness, minimum(dist.Distance))
     
-    uniqueness = DataFrame(
+    Obs_metrics = DataFrame(
         Species = [x for x in trait_matrix.species],
-        Uniqueness = uniqueness
-    )
-    
-    Obs_metrics = leftjoin(
-        contrib_sp,
-        originality,
-        on = :Species
-    )
-    Obs_metrics = leftjoin(
-        Obs_metrics,
-        uniqueness,
-        on = :Species
+        Originality = originality,
+        Uniqueness = uniqueness,
+        Contribution = contrib_sp
     )
     
     Obs_metrics

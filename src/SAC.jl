@@ -101,7 +101,8 @@ function SAC(community_matrix::Community_Matrix, npermut::Int64 = 0)
     end
     
     # Return plot
-    display(fig)
+    # display(fig)
+    fig
     
     #return accumulation values
     if npermut == 0

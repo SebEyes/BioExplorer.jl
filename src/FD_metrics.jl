@@ -79,7 +79,8 @@ function FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
             offset = (-15, 5)
         )
     
-        display(fig)
+        # display(fig)
+        fig
     end
 
 

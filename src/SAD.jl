@@ -106,7 +106,8 @@ function whittacker_plot(community_matrix::Community_Matrix, community_selected:
         color=(:blue,0.8)
     )
 
-    display(fig)
+    # display(fig)
+    fig
 end
 
 export whittacker_plot
@@ -222,7 +223,8 @@ function octave_plot(community_matrix::Community_Matrix, community_selected::Str
         markersize = 10
     )
 
-    display(fig)
+    # display(fig)
+    fig
 end
 
 export octave_plot

@@ -100,7 +100,11 @@ function FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
 
     rich = 0.5*sum([hull_coord[i,2]*hull_coord[i+1,1] - hull_coord[i,1]*hull_coord[i+1,2]  for i in 1:size(hull_coord)[1]-1])
 
-    return rich
+    if display_graph
+        return [rich, fig]
+    else
+        return rich
+    end
 end
 
 export FD_rich

@@ -106,9 +106,9 @@ function SAC(community_matrix::Community_Matrix, npermut::Int64 = 0)
     
     #return accumulation values
     if npermut == 0
-        accum
+        [accum, fig]
     else
-        accum_runs_stats
+        [accum_runs_stats, fig]
     end
 end
 

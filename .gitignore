@@ -5,6 +5,7 @@
 /*.R
 /docs/build
 /docs/elements_logo
+/test/workflow_example_publication.jl
 
 # Private dataset
 /*.csv

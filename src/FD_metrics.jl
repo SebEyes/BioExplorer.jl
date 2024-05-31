@@ -27,7 +27,7 @@ function FD_rich(trait_matrix::Trait_Matrix, weight, display_graph::Bool)
 
     points = projection(res_PCA)
 
-    (varPC1, varPC2) = round.(principalvars(res_PCA).*100, digits = 2)
+    (varPC1, varPC2) = round.(principalvars(res_PCA)./tprincipalvar(res_PCA).*100, digits = 2)
 
     x = points[:, 1]
     y = points[:, 2]

@@ -1,24 +1,48 @@
 # BioExplorer.jl
 
-> **IN DEVELOPMENT — not ready for a prerelease.** The Darwin Core redesign is being prepared. The implementation on this branch has not yet been migrated or validated. Existing APIs may change substantially.
+> **IN DEVELOPMENT — 0.2.0-DEV, not production-ready.** This breaking refactor is intended for an upcoming prerelease. APIs and methods may change. Julia tests and PDF compilation still require validation before release.
 
-BioExplorer is a Julia package for community ecology. The planned redesign will support an explicit Darwin Core tabular records → community matrices → reusable analyses → PDF report workflow.
+BioExplorer turns Darwin Core-style occurrence tables into explicit community matrices, reusable numerical/DataFrame analyses, and an optional PDF report.
 
-## Planned redesign
+## Quick start
 
-- CSV/TSV occurrence ingestion with explicit sampling-event and taxon identifiers.
-- Structured validation diagnostics and auditable exclusions.
-- Distinct incidence, abundance and occurrence-record semantics; occurrence counts must not silently be interpreted as organism abundances.
-- Independently usable alpha diversity, beta diversity, composition, accumulation and applicable richness estimators returning numerical values or DataFrames.
-- Reproducible randomized analyses without input mutation.
-- Optional PDF reporting from the same computed results, with an external renderer documented separately.
+```julia
+using BioExplorer, DataFrames, Random
+records = DataFrame(eventID=["E1", "E1", "E2"],
+    scientificName=["spA", "spB", "spA"])
+community, diagnostics, exclusions = from_records(records; semantics=:incidence)
+results = analyze(community; rng=MersenneTwister(42), diagnostics=diagnostics)
+alpha = alpha_diversity(community)
+beta = beta_diversity(community)
+export_tables(results, "results")
+# Requires the external Typst compiler on PATH:
+write_report(results, "community-report.pdf")
+```
 
-These items are a roadmap, not a statement that they are implemented in this branch. Full Darwin Core Archive support is not yet promised.
+Use `from_table("occurrences.tsv")` for CSV/TSV ingestion. To use individual counts, explicitly pass `semantics=:abundance, count_col=:individualCount`. Chao1 and singleton coverage require integer individual counts. Record counts (`:records`) are not organism abundances. Grouping defaults to `eventID`; explicitly choose another column with `event_col` only when ecologically justified. Taxon identifiers must be consistent within the dataset; no taxonomic reconciliation is performed.
 
-## Development status
+## Analyses
 
-The code migration and tests must be completed before publishing a prerelease. Do not rely on the proposed new API yet. All new code comments and documentation will be written in English.
+- Richness, Shannon, Simpson concentration, Hill q=1/q=2, Pielou evenness.
+- Pairwise Jaccard, Sørensen and Bray–Curtis dissimilarities.
+- Ranked taxon composition and randomized site accumulation.
+- Abundance-only Chao1 and Good's singleton sample coverage.
+- Reusable DataFrames, CSV exports and a tabular PDF report generated from the same results.
 
-## License
+## Important limitations
 
-MIT; see the existing license in this repository.
+Occurrence records alone do not establish sampling completeness or verified absences. Zeros in community matrices mean unrecorded taxa. Compare communities only with a defensible sampling design. Incidence/record-weighted Shannon and Bray–Curtis must not be interpreted as individual-abundance diversity. Missing identifiers/counts and unsupported statuses are excluded with diagnostics; inspect and retain both diagnostics and exclusions. Explicit absence rows are excluded, including absence-only events; define surveyed empty sites directly with `CommunityMatrix` when justified. Duplicate occurrence IDs are not automatically deduplicated: clean the input first.
+
+Full DwC-A archives/extensions, taxonomy resolution, Chao2/Jackknife, coverage-standardized rarefaction, plotting, functional/phylogenetic diversity and legacy gambin APIs are **not implemented** in this prerelease. Large PDF tables may require selecting or exporting results separately.
+
+## Development and validation
+
+Julia 1.9 or newer is required. From a checkout:
+
+```sh
+julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
+```
+
+Install Typst separately to generate PDFs. Tests were added but could not be executed in the preparation environment because dependency retrieval failed. PDF generation likewise remains unverified. No release has been published by this change.
+
+See `docs/quickstart.md`, `docs/methods.md`, `docs/reference.md` and `docs/migration.md`. MIT license; retain the upstream license notice.

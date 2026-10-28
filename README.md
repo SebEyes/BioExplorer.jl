@@ -1,40 +1,24 @@
-# BioExplorer.jl </h1>
+# BioExplorer.jl
 
-<img src="docs\logo_V1.png" alt="BioExplore.jl Logo" align = "right" style="padding-left:10px;" width="150"/>
+> **IN DEVELOPMENT — not ready for a prerelease.** The Darwin Core redesign is being prepared. The implementation on this branch has not yet been migrated or validated. Existing APIs may change substantially.
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Julia Version](https://img.shields.io/badge/Julia-v1.9%20%7C%20v1.9%2B-red.svg)](https://julialang.org/)
+BioExplorer is a Julia package for community ecology. The planned redesign will support an explicit Darwin Core tabular records → community matrices → reusable analyses → PDF report workflow.
 
-## Introduction
+## Planned redesign
 
-BioExplorer.jl is a powerful Julia package designed for biodiversity analysis and exploration. This comprehensive toolkit offers a wide range of functions and tools to facilitate the study of biodiversity patterns, species richness, abundance, and ecological metrics. Whether you are a researcher, conservationist, or data enthusiast, BioExplorer.jl empowers you to delve into the intricacies of biodiversity data, enabling deeper insights and informed decision-making for the preservation and understanding of our natural world.
+- CSV/TSV occurrence ingestion with explicit sampling-event and taxon identifiers.
+- Structured validation diagnostics and auditable exclusions.
+- Distinct incidence, abundance and occurrence-record semantics; occurrence counts must not silently be interpreted as organism abundances.
+- Independently usable alpha diversity, beta diversity, composition, accumulation and applicable richness estimators returning numerical values or DataFrames.
+- Reproducible randomized analyses without input mutation.
+- Optional PDF reporting from the same computed results, with an external renderer documented separately.
 
-## Features
+These items are a roadmap, not a statement that they are implemented in this branch. Full Darwin Core Archive support is not yet promised.
 
-- Calculate species richness and diversity indices.
-- Analyze species abundance distributions.
-- Explore community composition and beta diversity.
-- Estimate species taxonomic richness and sampling coverage.
-- Perform taxonomic and functionnal diversity assessments.
+## Development status
 
-## Installation
-
-To install BioExplorer.jl, you'll need Julia v1.9 or higher. Open the Julia REPL and run:
-
-```julia
-using Pkg
-Pkg.add("BioExplorer")
-```
-
-## Quick start
-For more detailed examples and usage instructions, please refer to the documentation.
-
-## Contributing
-We welcome contributions from the community to improve and expand BioExplorer.jl. If you encounter any issues, have feature requests, or want to contribute, please check out our contribution guidelines and code of conduct.
+The code migration and tests must be completed before publishing a prerelease. Do not rely on the proposed new API yet. All new code comments and documentation will be written in English.
 
 ## License
-BioExplorer.jl is licensed under the MIT License - see the LICENSE file for details.
 
-## Contact
-For questions, feedback, or collaborations, please reach out to [Sébastien Lhoumeau](mailto:seb.lhoumeau@gmail.com).
-
+MIT; see the existing license in this repository.

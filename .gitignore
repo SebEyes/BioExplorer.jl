@@ -1,8 +1,9 @@
 ## Functions from the first version of the package
 deprecated
 
-## Internal test file for development
+## Internal test files for development
 example.jl
+datasets_DWCA_test
 
 ## Manifest file
 Manifest.toml

@@ -4,7 +4,14 @@ module BioExplorer
 using CSV, DataFrames, Random, SparseArrays, Statistics
 
 ## Export functions
-export CommunityMatrix, validate_records, from_records, from_table, alpha_diversity, beta_diversity, rank_abundance, accumulation_curve, richness_estimators, sampling_coverage, AnalysisResult, analyze, export_tables, write_report
+# From core.jl
+export CommunityMatrix, validate_records, from_records, from_table
+
+# From analysis.jl
+export alpha_diversity, beta_diversity, rank_abundance, accumulation_curve, richness_estimators, sampling_coverage, AnalysisResult, analyze, export_tables
+
+# From report.jl
+export write_report
 
 ## Script files
 # Internal tool functions

@@ -406,7 +406,6 @@ community, diagnostics, exclusions = from_table(
     count_col=:individualCount,
 )
 """
-
 function from_table(path; delim='\t', kwargs...)
     isfile(path) || throw(ArgumentError("File not found"))
     from_records(CSV.read(path, DataFrame; delim=delim); kwargs...)

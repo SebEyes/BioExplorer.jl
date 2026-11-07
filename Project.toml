@@ -6,15 +6,17 @@ authors = ["Sébastien Lhoumeau <seb.lhoumeau@gmail.com>"]
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
 
 [compat]
 CSV = "0.10"
 DataFrames = "1"
-Revise = "3.18.0"
+Makie = "0.24.17"
+Typstry = "0.7.0"
 julia = "1.10"
 
 [extras]

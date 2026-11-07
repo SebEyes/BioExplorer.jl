@@ -1,7 +1,7 @@
 module BioExplorer
 
 ## Dependencies
-using CSV, DataFrames, Random, SparseArrays, Statistics, Makie
+using CSV, DataFrames, Random, SparseArrays, Statistics, Makie, Typstry
 
 ## Export functions
 # From core.jl

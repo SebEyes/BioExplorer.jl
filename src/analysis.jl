@@ -530,44 +530,50 @@ chao2_result = richness_estimators(incidence_community)
 ```
 """
 function richness_estimators(c::CommunityMatrix)
-if c.semantics == :abundance
-    all(x -> isfinite(x) && isinteger(x), c.values) ||
-        throw(ArgumentError(
-            "Chao1 requires finite, non-negative integer-valued abundances; " *
-            "floating-point values are accepted only when they represent integers."
-        ))
+    if c.semantics == :abundance
 
-    @info "Calculating Chao1 from abundance data."
+        # Accept floating-point abundances when they represent whole individuals.
+        x_float = Float64.(c.values)
 
-    d = DataFrame(
-        site=String[],
-        observed_richness=Int[],
-        singletons=Int[],
-        doubletons=Int[],
-        chao1=Float64[],
-        sample_coverage=Union{Missing,Float64}[],
-    )
+        all(x -> isfinite(x), x_float) ||
+            throw(ArgumentError(
+                "Chao1 requires finite abundances; fractional values cannot be converted."
+            ))
+        
+        # Convert abundance values to integer
+        x_integer = round.(Int, x_float)
 
-    for (i, site) in enumerate(c.sites)
-        # Convert validated integer-valued abundances before counting.
-        x = round.(Int, c.values[i, :])
-        richness = count(>(0), x)
-        singletons = count(==(1), x)
-        doubletons = count(==(2), x)
-        total = sum(x)
+        @info "Calculating Chao1 from abundance data."
 
-        chao1 = richness + (
-            doubletons == 0 ?
-            singletons * (singletons - 1) / 2 :
-            singletons^2 / (2 * doubletons)
+        d = DataFrame(
+            site=String[],
+            observed_richness=Int[],
+            singletons=Int[],
+            doubletons=Int[],
+            chao1=Float64[],
+            sample_coverage=Union{Missing,Float64}[],
         )
 
-        coverage = total == 0 ? missing : 1 - singletons / total
+        for (i, site) in enumerate(c.sites)
+            # Convert validated integer-valued abundances before counting.
+            x = x_integer[i, :]
+            richness = count(>(0), x)
+            singletons = count(==(1), x)
+            doubletons = count(==(2), x)
+            total = sum(x)
 
-        push!(d, (site, richness, singletons, doubletons, chao1, coverage))
-    end
+            chao1 = richness + (
+                doubletons == 0 ?
+                singletons * (singletons - 1) / 2 :
+                singletons^2 / (2 * doubletons)
+            )
 
-    return d
+            coverage = total == 0 ? missing : 1 - singletons / total
+
+            push!(d, (site, richness, singletons, doubletons, chao1, coverage))
+        end
+
+        return d
 
     elseif c.semantics == :incidence
         @info "Calculating Chao2 from incidence data."
@@ -603,24 +609,149 @@ if c.semantics == :abundance
 end
 
 
-sampling_coverage(c::CommunityMatrix)=richness_estimators(c)[!,[:site,:sample_coverage]]
-struct AnalysisResult
- alpha::DataFrame
- beta::DataFrame
- composition::DataFrame
- accumulation::DataFrame
- estimators::Union{Nothing,DataFrame}
- diagnostics::DataFrame
+"""
+    sampling_coverage(c::CommunityMatrix)
+
+Return the per-site sample coverage estimates.
+
+The result contains only the `site` and `sample_coverage` columns from
+[`richness_estimators`](@ref). The estimator and therefore the coverage
+calculation depend on `c.semantics`: Chao1 is used for abundance data and
+Chao2 for incidence data.
+
+# Returns
+A `DataFrame` with columns `site` and `sample_coverage`.
+"""
+function sampling_coverage(c::CommunityMatrix)
+    estimates = richness_estimators(c)
+
+    # Keep the output consistent if an estimator returns no coverage column.
+    if !(:sample_coverage in propertynames(estimates))
+        return DataFrame(
+            site = copy(c.sites),
+            sample_coverage = Union{Missing, Float64}[missing for _ in c.sites],
+        )
+    end
+
+    return select(estimates, :site, :sample_coverage)
 end
-"Run supported analyses and retain reusable result tables."
-analyze(c::CommunityMatrix;iterations=100,rng=Random.default_rng(),diagnostics=DataFrame())=AnalysisResult(alpha_diversity(c),beta_diversity(c),rank_abundance(c),accumulation_curve(c;iterations,rng),c.semantics==:abundance ? richness_estimators(c) : nothing,DataFrame(diagnostics))
-"Export result tables, checking all destinations before writing."
-function export_tables(r::AnalysisResult,dir;overwrite=false)
- ts=Dict("alpha.csv"=>r.alpha,"beta.csv"=>r.beta,"composition.csv"=>r.composition,"accumulation.csv"=>r.accumulation,"diagnostics.csv"=>r.diagnostics)
- r.estimators!==nothing&&(ts["estimators.csv"]=r.estimators)
- paths=[joinpath(dir,n) for n in keys(ts)]
- !overwrite&&any(ispath,paths)&&throw(ArgumentError("Refusing to overwrite existing tables"))
- mkpath(dir)
- for (n,d) in ts;CSV.write(joinpath(dir,n),d);end
- paths
+
+
+"""
+Container for the tabular outputs of the supported community analyses.
+
+Each field stores the result of one analysis as a `DataFrame`. `estimators`
+is `nothing` when richness estimators are not applicable to the input
+semantics.
+"""
+struct AnalysisResult
+    alpha::DataFrame
+    beta::DataFrame
+    composition::DataFrame
+    accumulation::DataFrame
+    estimators::Union{Nothing, DataFrame}
+    diagnostics::DataFrame
+end
+
+
+"""
+    analyze(c::CommunityMatrix; iterations=100, rng=Random.default_rng(),
+            diagnostics=DataFrame())
+
+Run the supported analyses for a community matrix and collect their results.
+
+Abundance matrices include a rank-abundance composition table and richness
+estimators (Chao1). Incidence matrices do not run the rank-abundance analysis
+and include richness estimators based on incidence (Chao2).
+
+# Arguments
+- `c`: Validated site-by-taxon community matrix.
+- `iterations`: Number of random permutations used by the accumulation curve.
+- `rng`: Random number generator passed to [`accumulation_curve`](@ref).
+- `diagnostics`: Optional row-level diagnostics to retain in the result.
+
+# Returns
+An [`AnalysisResult`](@ref) containing the output tables.
+"""
+function analyze(
+    c::CommunityMatrix;
+    iterations = 100,
+    rng = Random.default_rng(),
+    diagnostics = DataFrame(),
+)
+    # Rank-abundance is defined only for abundance data.
+    composition = if c.semantics == :abundance
+        rank_abundance(c)
+    else
+        # Return an empty table with the same columns as rank_abundance.
+        DataFrame(
+            site = String[],
+            rank = Int[],
+            taxon = String[],
+            value = Float64[],
+            proportion = Float64[],
+        )
+    end
+
+    # Richness estimators select Chao1 or Chao2 according to the semantics.
+    estimators = c.semantics in (:abundance, :incidence) ?
+        richness_estimators(c) :
+        nothing
+
+    return AnalysisResult(
+        alpha_diversity(c),
+        beta_diversity(c),
+        composition,
+        accumulation_curve(c; iterations, rng),
+        estimators,
+        DataFrame(diagnostics),
+    )
+end
+
+
+"""
+    export_tables(r::AnalysisResult, dir; overwrite=false)
+
+Write the analysis result tables to CSV files in `dir`.
+
+Files are written in a fixed order: `alpha.csv`, `beta.csv`,
+`composition.csv`, `accumulation.csv`, optionally `estimators.csv`, and
+`diagnostics.csv`. When `overwrite` is `false`, the function checks every
+destination before writing and throws an `ArgumentError` if any already
+exists.
+
+# Returns
+A vector of file paths in the same fixed order as the files are written.
+"""
+function export_tables(r::AnalysisResult, dir; overwrite = false)
+    # An ordered vector of pairs guarantees deterministic write and return order.
+    tables = Pair{String, DataFrame}[
+        "alpha.csv" => r.alpha,
+        "beta.csv" => r.beta,
+        "composition.csv" => r.composition,
+        "accumulation.csv" => r.accumulation,
+    ]
+
+    # Include estimators only when they were calculated.
+    if r.estimators !== nothing
+        push!(tables, "estimators.csv" => r.estimators)
+    end
+
+    push!(tables, "diagnostics.csv" => r.diagnostics)
+
+    paths = [joinpath(dir, filename) for (filename, _) in tables]
+
+    # Check all destinations before creating the directory or writing files.
+    if !overwrite && any(ispath, paths)
+        throw(ArgumentError("Refusing to overwrite existing tables"))
+    end
+
+    mkpath(dir)
+
+    # Write files in the same stable order as `paths`.
+    for (filename, table) in tables
+        CSV.write(joinpath(dir, filename), table)
+    end
+
+    return paths
 end

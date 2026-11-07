@@ -1,7 +1,7 @@
 module BioExplorer
 
 ## Dependencies
-using CSV, DataFrames, Random, SparseArrays, Statistics
+using CSV, DataFrames, Random, SparseArrays, Statistics, Makie
 
 ## Export functions
 # From core.jl
@@ -9,6 +9,9 @@ export CommunityMatrix, validate_records, from_records, from_table
 
 # From analysis.jl
 export alpha_diversity, beta_diversity, rank_abundance, accumulation_curve, richness_estimators, sampling_coverage, AnalysisResult, analyze, export_tables
+
+# From graph_output.jl
+export SAD_graph
 
 # From report.jl
 export write_report
@@ -22,6 +25,7 @@ include("core.jl")
 
 
 include("analysis.jl")
+include("graph_output.jl")
 include("report.jl")
 
 

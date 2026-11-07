@@ -1,6 +1,6 @@
 name = "BioExplorer"
 uuid = "92f832ab-a3ce-4d7c-a08d-a5d13ab1bbba"
-version = "1.0.0-DEV"
+version = "1.0.0"
 authors = ["Sébastien Lhoumeau <seb.lhoumeau@gmail.com>"]
 
 [deps]

@@ -1,12 +1,9 @@
-/Manifest.toml
-/.vscode
-/src/dev.jl
-/test/use-cases.jl
-/*.R
-/docs/build
-/docs/elements_logo
-/test/workflow_example_publication.jl
+## Functions from the first version of the package
+deprecated
 
-# Private dataset
-/*.csv
-/*.xlsx
+## Internal test files for development
+example.jl
+datasets_DWCA_test
+
+## Manifest file
+Manifest.toml

@@ -13,7 +13,7 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
 
 [compat]
-CSV = "0.10"
+CSV = "0.10, 1.3"
 DataFrames = "1"
 Makie = "0.24.17"
 Random = "1.10"

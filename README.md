@@ -2,7 +2,6 @@
 
 **BioExplorer.jl** is a Julia toolkit for converting Darwin Core-style occurrence records into site-by-taxon community matrices and performing basic community ecology analyses.
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://sebyes.github.io/BioExplorer.jl/stable)
 [![Release](https://img.shields.io/github/v/release/SebEyes/BioExplorer.jl)](https://github.com/SebEyes/BioExplorer.jl/releases/latest)
 
 ## Features
